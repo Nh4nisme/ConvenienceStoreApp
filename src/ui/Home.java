@@ -21,7 +21,7 @@ public class Home extends JFrame {
         cardPanel = new JPanel(cardLayout);
         cardPanel.add(new DashBoardCard(), "Dashboard");
         cardPanel.add(new ProductsCard(), "Products");
-        cardPanel.add(new CustomersCarḍĐ, "Customers");
+        cardPanel.add(new CustomersCard(), "Customers");
         add(new SiderBar(cardLayout, cardPanel), BorderLayout.WEST);
         add(cardPanel, BorderLayout.CENTER);
 
