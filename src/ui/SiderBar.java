@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SiderBar extends JPanel {
-    private final String[] menuItems = {"Dashboard", "Products", "Orders", "Accounts", "Onboard"};
+    private final String[] menuItems = {"Dashboard", "Products", "Customers", "Orders", "Accounts", "Onboard"};
     private final String[] menuIcons = {
         "dashboard.png",
         "product.png",
+        "customer.png",
         "order.png",
         "account.png",
         "onboard.png"
@@ -97,6 +98,9 @@ public class SiderBar extends JPanel {
                 break;
             case "Products":
                 cardLayout.show(cardPanel, "Products");
+                break;
+            case "Customers":
+                cardLayout.show(cardPanel, "Customers");
                 break;
             case "Orders":
                 cardLayout.show(cardPanel, "Orders");
