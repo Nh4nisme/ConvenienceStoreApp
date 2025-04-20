@@ -9,7 +9,8 @@
 	<classpathentry kind="src" path="icon"/>
 	<classpathentry kind="src" path="lib"/>
 	<classpathentry kind="src" path="sql"/>
-	<classpathentry kind="lib" path="E:/Study/Convenience_Store_Java/CHTL_Java/ConvenienceStoreApp/lib/sqljdbc42.jar">
+	<classpathentry kind="src" path="img"/>
+	<classpathentry kind="lib" path="lib/sqljdbc42.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
