@@ -97,12 +97,18 @@ public class LoginUI extends JFrame {
         }
         if (tk != null) {
             JOptionPane.showMessageDialog(this, "Đăng nhập thành công với vai trò: " + tk.getVaiTro());
-            // TODO: Chuyển đến màn hình chính ở đây, ví dụ: mở cửa sổ mới
+            openHomeScreen();
         } else {
             JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không chính xác!");
         }
 
         Clear();
+    }
+
+    private void openHomeScreen() {
+        Home home = new Home();
+        home.setVisible(true);
+        this.dispose();
     }
 
     private void Clear() {
