@@ -22,6 +22,7 @@ CREATE TABLE TaiKhoan (
     MaNhanVien VARCHAR(10) UNIQUE NOT NULL,
     VaiTro NVARCHAR(50) NOT NULL,
     TrangThai BIT DEFAULT 1,
+
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
@@ -91,6 +92,7 @@ CREATE TABLE ChiTietHoaDon (
     DonGia DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (MaHoaDon) REFERENCES HoaDon(MaHoaDon),
     FOREIGN KEY (MaSanPham) REFERENCES SanPham(MaSanPham)
+
 );
 
 
@@ -214,3 +216,4 @@ VALUES
 ('CT00003', 'HD00002', 'SP00003', 1, 3000000),
 ('CT00004', 'HD00003', 'SP00004', 2, 350000),
 ('CT00005', 'HD00004', 'SP00005', 1, 500000);
+
