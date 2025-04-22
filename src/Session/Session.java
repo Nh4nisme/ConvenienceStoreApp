@@ -3,22 +3,31 @@ package Session;
 import entity.TaiKhoan;
 
 public class Session {
-    private static TaiKhoan currentUser;
+    private static Session instance;
+    private TaiKhoan taiKhoan;
 
-    public static void login(TaiKhoan user) {
-        currentUser = user;
+    private Session() {}
+
+    public static Session getInstance() {
+        if (instance == null) {
+            instance = new Session();
+        }
+        return instance;
     }
 
-    public static void logout() {
-        currentUser = null;
+    public void login(TaiKhoan tk) {
+        this.taiKhoan = tk;
     }
 
-    public static TaiKhoan getCurrentUser() {
-        return currentUser;
+    public void logout() {
+        taiKhoan = null;
     }
 
-    public static boolean isLoggedIn() {
-        return currentUser != null;
+    public TaiKhoan getTaiKhoan() {
+        return taiKhoan;
+    }
+
+    public boolean isLoggedIn() {
+        return taiKhoan != null;
     }
 }
-
