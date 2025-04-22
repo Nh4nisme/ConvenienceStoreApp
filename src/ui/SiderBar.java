@@ -16,6 +16,7 @@ public class SiderBar extends JPanel {
         "account.png",
         "onboard.png"
     };
+    private final String logoPath = "./icon/logo.png";
     private final Color defaultColor = new Color(198, 221, 234);
     private final Color selectedColor = new Color(255, 217, 158);
     private final List<JPanel> menuItemList = new ArrayList<>();
@@ -34,7 +35,17 @@ public class SiderBar extends JPanel {
         setPreferredSize(new Dimension(250, 0)); // Cố định chiều rộng thanh sidebar
 
         // Gọi hàm tạo sidebar
+        addLogo();
         createSiderBar();
+
+    }
+
+    private void addLogo() {
+        ImageIcon logoIcon = new ImageIcon(logoPath);
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        logoLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0)); // khoảng cách top-bottom
+        add(logoLabel);
     }
 
     private void createSiderBar() {
@@ -53,7 +64,7 @@ public class SiderBar extends JPanel {
         JPanel menuItem = new JPanel();
         menuItem.setLayout(new BoxLayout(menuItem, BoxLayout.X_AXIS));
         menuItem.setBackground(defaultColor);
-        menuItem.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        menuItem.setAlignmentX(Component.LEFT_ALIGNMENT);
         menuItem.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 10));
 
         int menuItemWidth = (int) (siderBarWidth * 0.9);  

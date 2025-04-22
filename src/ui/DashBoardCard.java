@@ -1,5 +1,8 @@
 package ui;
 
+import entity.TaiKhoan;
+import Session.Session;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
@@ -32,10 +35,11 @@ public class DashBoardCard extends JPanel {
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 15, 0));
         statsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
+        TaiKhoan tk = Session.getInstance().getTaiKhoan();
         statsPanel.add(createCard("Total Sales", "x.xxx", "./icon/sales.png"));
         statsPanel.add(createCard("Products", "xxxxx", "./icon/products.png"));
         statsPanel.add(createCard("Orders", "x.xxx", "./icon/orders.png"));
-        statsPanel.add(createCard("Employees", "xx", "./icon/employees.png"));
+        statsPanel.add(createCard("Employees", tk.getTenDangNhap(), "./icon/employees.png"));
 
         JPanel grid2x2 = new JPanel(new GridLayout(2, 2, 15, 15));
         grid2x2.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));

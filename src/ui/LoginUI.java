@@ -7,6 +7,7 @@ import java.awt.event.*;
 import Components.RoundedButton;
 import Components.RoundedInputField;
 import Components.RoundedPanel;
+import Session.Session;
 import entity.TaiKhoan;
 import dao.TaiKhoan_DAO;
 
@@ -97,6 +98,7 @@ public class LoginUI extends JFrame {
         }
         if (tk != null) {
             JOptionPane.showMessageDialog(this, "Đăng nhập thành công với vai trò: " + tk.getVaiTro());
+            Session.getInstance().login(tk);
             openHomeScreen();
         } else {
             JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không chính xác!");

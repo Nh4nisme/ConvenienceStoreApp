@@ -32,6 +32,5 @@ public class RoundedButton extends JButton {
 
     @Override
     protected void paintBorder(Graphics g) {
-        // Không vẽ viền
     }
 }
