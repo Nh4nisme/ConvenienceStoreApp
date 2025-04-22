@@ -72,7 +72,7 @@ public class LoginUI extends JFrame {
         lblTitleLogo.setFont(new Font("SansSerif", Font.BOLD, 80));
         add(southPanel, BorderLayout.SOUTH);
 
-        // Bắt sự kiện login (tùy bạn xử lý bên dưới)
+        // Bắt sự kiện login
         btnLogin.addActionListener(e -> xuLyDangNhap());
 
         centerPanel.add(loginPanel);
@@ -81,7 +81,7 @@ public class LoginUI extends JFrame {
 
     private void xuLyDangNhap() {
         String tenDangNhap = txtTenDangNhap.getText();
-        String matKhau = txtMatKhau.getText();  // Dùng getText() cho trường mật khẩu nếu không phải JPasswordField
+        String matKhau = txtMatKhau.getText();
 
         if (tenDangNhap.isEmpty() || matKhau.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống!");
