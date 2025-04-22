@@ -34,28 +34,37 @@ AS
 BEGIN
     DECLARE @IsValid BIT;
 
-    -- Kiểm tra tài khoản với tên đăng nhập và mật khẩu
-    SELECT @IsValid = CASE
-                          WHEN COUNT(*) > 0 THEN 1
-                          ELSE 0
-                      END
-    FROM TaiKhoan
-    WHERE TenDangNhap = @TenDangNhap AND MatKhau = @MatKhau AND TrangThai = 1; -- TrangThai = 1 chỉ tài khoản hoạt động
+    -- Kiểm tra tài khoản với tên đăng nhập và mật khẩu, phân biệt chữ hoa và chữ thường
+    IF EXISTS (
+        SELECT 1
+        FROM TaiKhoan
+        WHERE TenDangNhap COLLATE Latin1_General_BIN = @TenDangNhap COLLATE Latin1_General_BIN
+        AND MatKhau COLLATE Latin1_General_BIN = @MatKhau COLLATE Latin1_General_BIN
+        AND TrangThai = 1 -- Tài khoản hoạt động
+    )
+BEGIN
+        SET @IsValid = 1;
+END
+ELSE
+BEGIN
+        SET @IsValid = 0;
+END
 
     -- Nếu tài khoản hợp lệ, trả về thông tin tài khoản
     IF @IsValid = 1
-    BEGIN
-        SELECT TaiKhoan.TenDangNhap, TaiKhoan.MaNhanVien, TaiKhoan.VaiTro, NhanVien.HoTen
-        FROM TaiKhoan
-        JOIN NhanVien ON TaiKhoan.MaNhanVien = NhanVien.MaNhanVien
-        WHERE TaiKhoan.TenDangNhap = @TenDangNhap;
-    END
-    ELSE
-    BEGIN
-        -- Nếu đăng nhập thất bại, trả về thông báo lỗi
-        SELECT NULL AS TenDangNhap, NULL AS MaNhanVien, NULL AS VaiTro, NULL AS HoTen;
-    END
+BEGIN
+SELECT TaiKhoan.TenDangNhap, TaiKhoan.MaNhanVien, TaiKhoan.VaiTro, NhanVien.HoTen
+FROM TaiKhoan
+         JOIN NhanVien ON TaiKhoan.MaNhanVien = NhanVien.MaNhanVien
+WHERE TaiKhoan.TenDangNhap = @TenDangNhap;
 END
+ELSE
+BEGIN
+        -- Trả về thông báo thất bại nếu đăng nhập không thành công
+SELECT 'Lỗi đăng nhập! Tài khoản hoặc mật khẩu không đúng.' AS ErrorMessage;
+END
+END
+
 
 
 
