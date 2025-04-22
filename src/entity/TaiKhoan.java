@@ -1,19 +1,12 @@
 package entity;
 
+
 public class TaiKhoan {
     private String tenDangNhap;
     private String matKhau;
-    private NhanVien nhanVien;
+    private String maNhanVien;
     private String vaiTro;
     private boolean trangThai;
-
-    public TaiKhoan(String tenDangNhap, String matKhau, NhanVien nhanVien, String vaiTro, boolean trangThai) {
-        this.tenDangNhap = tenDangNhap;
-        this.matKhau = matKhau;
-        this.nhanVien = nhanVien;
-        this.vaiTro = vaiTro;
-        this.trangThai = trangThai;
-    }
 
     public String getTenDangNhap() {
         return tenDangNhap;
@@ -31,12 +24,12 @@ public class TaiKhoan {
         this.matKhau = matKhau;
     }
 
-    public NhanVien getNhanVien() {
-        return nhanVien;
+    public String getMaNhanVien() {
+        return maNhanVien;
     }
 
-    public void setNhanVien(NhanVien nhanVien) {
-        this.nhanVien = nhanVien;
+    public void setMaNhanVien(String maNhanVien) {
+        this.maNhanVien = maNhanVien;
     }
 
     public String getVaiTro() {
@@ -53,16 +46,5 @@ public class TaiKhoan {
 
     public void setTrangThai(boolean trangThai) {
         this.trangThai = trangThai;
-    }
-
-    @Override
-    public String toString() {
-        return "TaiKhoan{" +
-                "username=" + tenDangNhap +
-                ", password='" + matKhau + '\'' +
-                ", NhanVien='" + (nhanVien != null ? nhanVien.getMaNhanVien() : "null") + '\'' +
-                ", vaitro=" + vaiTro + '\'' +
-                ", TrangThai=" + (trangThai ? "Hoat dong" : "Tam nghi") +
-                '}';
     }
 }
