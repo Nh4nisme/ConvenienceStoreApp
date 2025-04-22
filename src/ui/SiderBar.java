@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SiderBar extends JPanel {
-    private final String[] menuItems = {"Dashboard", "Products", "Customers", "Orders", "Accounts", "Onboard"};
+    private final String[] menuItems = {"Dashboard", "Products","Customers", "Orders", "Onboard"};
     private final String[] menuIcons = {
         "dashboard.png",
         "product.png",
-        "customer.png",
-        "order.png",
         "account.png",
+        "order.png",
         "onboard.png"
     };
     private final Color defaultColor = new Color(198, 221, 234);

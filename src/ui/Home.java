@@ -31,6 +31,6 @@ public class Home extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Home::new);
         ConnectDB.getInstance().connect();
-//        ConnectDB.disconnect();
+       //ConnectDB.disconnect();
     }
 }

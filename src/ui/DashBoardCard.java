@@ -6,7 +6,6 @@ import java.awt.*;
 
 public class DashBoardCard extends JPanel {
 
-    private final Color bg = new Color(239, 238, 238);
     private final String[][] weeks = {
         {"Week1", "xxx"}, {"Week2", "xxx"}, {"Week3", "xxx"}
     };
@@ -19,20 +18,19 @@ public class DashBoardCard extends JPanel {
 
     public DashBoardCard() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JPanel pTitle = new JPanel();
+        JPanel headerPanel = new JPanel(new BorderLayout());
         JLabel lblDashboard = new JLabel("Dashboard");
         lblDashboard.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        pTitle.add(lblDashboard);
+        headerPanel.add(lblDashboard, BorderLayout.WEST);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
 
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 15, 0));
         statsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-        statsPanel.setBackground(bg);
-        statsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
         statsPanel.add(createCard("Total Sales", "x.xxx", "./icon/sales.png"));
         statsPanel.add(createCard("Products", "xxxxx", "./icon/products.png"));
@@ -40,14 +38,13 @@ public class DashBoardCard extends JPanel {
         statsPanel.add(createCard("Employees", "xx", "./icon/employees.png"));
 
         JPanel grid2x2 = new JPanel(new GridLayout(2, 2, 15, 15));
-        grid2x2.setBackground(bg);
-        grid2x2.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        grid2x2.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
         grid2x2.add(createListPanel("Top Products", items));
         grid2x2.add(createListPanel("Revenue", weeks));
         grid2x2.add(createListPanel("Top Employees", employees));
         grid2x2.add(createTablePanel());
 
-        contentPanel.add(pTitle);
+        contentPanel.add(headerPanel);
         contentPanel.add(statsPanel);
         contentPanel.add(grid2x2);
 
