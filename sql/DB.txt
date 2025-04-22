@@ -15,23 +15,16 @@ CREATE TABLE NhanVien (
     DiaChi NVARCHAR(200)
 );
 
--- SP CRUD for employees
+-- ====================== BẢNG TÀI KHOẢN ======================
+CREATE TABLE TaiKhoan (
+    TenDangNhap VARCHAR(50) PRIMARY KEY,
+    MatKhau VARCHAR(100) NOT NULL,
+    MaNhanVien INT UNIQUE NOT NULL,
+    VaiTro NVARCHAR(50) NOT NULL,
+    TrangThai BIT DEFAULT 1,
 
-CREATE PROC sp_NhanVien(
-	@MaNhanVien INT,
-	@HoTen NVARCHAR(100),
-	@SoDienThoai VARCHAR(20),
-	@GioiTinh NVARCHAR(10),
-	@NgaySinh DATE,
-	@DiaChi NVARCHAR(200),
-	@Type NVARCHAR(20)
-) AS
-BEGIN
-	IF @Type = 'SELECT'
-	BEGIN
-		SELECT * FROM NhanVien
-	END
-END
+    FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
+);
 
 -- ====================== BẢNG CA LÀM VIỆC ======================
 CREATE TABLE CaLamViec (
