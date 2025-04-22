@@ -1,31 +1,14 @@
 package entity;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 public class NhanVien {
-    private int maNhanVien;
+    private String maNhanVien;
     private String hoTen;
-    private String sdt;
-    private boolean isGender;
-    private LocalDate ngaySinh;
+    private String soDienThoai;
+    private String gioiTinh;
+    private java.sql.Date ngaySinh;
     private String diaChi;
-
-    public NhanVien(int maNhanVien, String hoTen, String sdt, boolean isGender, LocalDate ngaySinh, String diaChi) {
-        this.maNhanVien = maNhanVien;
-        this.hoTen = hoTen;
-        this.sdt = sdt;
-        this.isGender = isGender;
-        this.ngaySinh = ngaySinh;
-        this.diaChi = diaChi;
-    }
-
-    public int getMaNhanVien() {
-        return maNhanVien;
-    }
-
-    public void setMaNhanVien(int maNhanVien) {
-        this.maNhanVien = maNhanVien;
-    }
 
     public String getHoTen() {
         return hoTen;
@@ -35,28 +18,28 @@ public class NhanVien {
         this.hoTen = hoTen;
     }
 
-    public String getSdt() {
-        return sdt;
+    public String getMaNhanVien() {
+        return maNhanVien;
     }
 
-    public void setSdt(String sdt) {
-        this.sdt = sdt;
+    public void setMaNhanVien(String maNhanVien) {
+        this.maNhanVien = maNhanVien;
     }
 
-    public boolean isGender() {
-        return isGender;
+    public String getSoDienThoai() {
+        return soDienThoai;
     }
 
-    public void setGender(boolean gender) {
-        isGender = gender;
+    public void setSoDienThoai(String soDienThoai) {
+        this.soDienThoai = soDienThoai;
     }
 
-    public LocalDate getNgaySinh() {
-        return ngaySinh;
+    public String getGioiTinh() {
+        return gioiTinh;
     }
 
-    public void setNgaySinh(LocalDate ngaySinh) {
-        this.ngaySinh = ngaySinh;
+    public void setGioiTinh(String gioiTinh) {
+        this.gioiTinh = gioiTinh;
     }
 
     public String getDiaChi() {
@@ -67,15 +50,11 @@ public class NhanVien {
         this.diaChi = diaChi;
     }
 
-    @Override
-    public String toString() {
-        return "NhanVien{" +
-                "maNhanVien=" + maNhanVien +
-                ", hoTen='" + hoTen + '\'' +
-                ", sdt='" + sdt + '\'' +
-                ", gender=" + (isGender ? "Nam" : "Nữ") +
-                ", ngaySinh=" + ngaySinh +
-                ", diaChi='" + diaChi + '\'' +
-                '}';
+    public Date getNgaySinh() {
+        return ngaySinh;
+    }
+
+    public void setNgaySinh(Date ngaySinh) {
+        this.ngaySinh = ngaySinh;
     }
 }
