@@ -1,17 +1,17 @@
 package entity;
 
 public class SanPham {
-    private int maSanPham;
+    private String maSanPham;
     private String tenSanPham;
     private String donViTinh;
     private double giaBan;
     private int soLuongTon;
-    private int maLoai;
+    private String maLoai;
 
     public SanPham() {
     }
 
-    public SanPham(int maSanPham, String tenSanPham, String donViTinh, double giaBan, int soLuongTon, int maLoai) {
+    public SanPham(String maSanPham, String tenSanPham, String donViTinh, double giaBan, int soLuongTon, String maLoai) {
         this.maSanPham = maSanPham;
         this.tenSanPham = tenSanPham;
         this.donViTinh = donViTinh;
@@ -20,11 +20,11 @@ public class SanPham {
         this.maLoai = maLoai;
     }
 
-    public int getMaSanPham() {
+    public String getMaSanPham() {
         return maSanPham;
     }
 
-    public void setMaSanPham(int maSanPham) {
+    public void setMaSanPham(String maSanPham) {
         this.maSanPham = maSanPham;
     }
 
@@ -60,23 +60,23 @@ public class SanPham {
         this.soLuongTon = soLuongTon;
     }
 
-    public int getMaLoai() {
+    public String getMaLoai() {
         return maLoai;
     }
 
-    public void setMaLoai(int maLoai) {
+    public void setMaLoai(String maLoai) {
         this.maLoai = maLoai;
     }
 
     @Override
     public String toString() {
         return "SanPham{" +
-                "maSanPham=" + maSanPham +
+                "maSanPham='" + maSanPham + '\'' +
                 ", tenSanPham='" + tenSanPham + '\'' +
                 ", donViTinh='" + donViTinh + '\'' +
                 ", giaBan=" + giaBan +
                 ", soLuongTon=" + soLuongTon +
-                ", maLoai=" + maLoai +
+                ", maLoai='" + maLoai + '\'' +
                 '}';
     }
 }

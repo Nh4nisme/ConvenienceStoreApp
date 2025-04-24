@@ -4,12 +4,22 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import java.util.List;
+
+import Components.RoundedButton;
+import dao.SanPham_DAO;
+import entity.SanPham;
+
 import java.awt.*;
 
 public class ProductsCard extends JPanel {
 
     private Color buttonColor = new Color(67, 141, 184);
     private Color textColor = Color.WHITE;
+	private RoundedButton addBtn;
+	private RoundedButton removeBtn;
+	SanPham_DAO dao = new SanPham_DAO();
+	List<SanPham> ds = dao.getAllSanPham();
 
     public ProductsCard() {
         setLayout(new BorderLayout());
@@ -56,20 +66,16 @@ public class ProductsCard extends JPanel {
         JTextField searchField = new JTextField(15);
         topPanel.add(searchField);
 
-        JButton addBtn = new JButton("Add Products");
-        JButton removeBtn = new JButton("Remove");
+        addBtn = new RoundedButton("Add Products", 30);
+        removeBtn = new RoundedButton("Remove", 30);
         topPanel.add(addBtn);
         topPanel.add(removeBtn);
 
         addBtn.setBackground(buttonColor);
         addBtn.setForeground(textColor);
-        addBtn.setFocusPainted(false);
-        addBtn.setOpaque(true);
 
         removeBtn.setBackground(buttonColor);
         removeBtn.setForeground(textColor);
-        removeBtn.setFocusPainted(false);
-        removeBtn.setOpaque(true);
 
         JPanel categoryPanel = new JPanel(new GridLayout(2, 6, 10, 10));
         categoryPanel.setBackground(Color.WHITE);
@@ -82,7 +88,7 @@ public class ProductsCard extends JPanel {
      }
 
      topPanel.add(categoryPanel);
-        String[] columns = {"", "Products ID", "Name Products", "Date exp", "Stocks", "Action"};
+        String[] columns = {"", "Products ID", "Name Products", "Price", "Stocks", "Action"};
 
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
@@ -101,15 +107,14 @@ public class ProductsCard extends JPanel {
         JTable table = new JTable(model);
         table.setRowHeight(30);
 
-        // Dummy data
-        for (int i = 0; i < 10; i++) {
-            ImageIcon trashIcon = new ImageIcon("./icon/trash.png"); // Icon for the "Action" column
+        ImageIcon trashIcon = new ImageIcon("./icon/trash.png");
+        for (SanPham sp : ds) {
             model.addRow(new Object[]{
                 false,
-                "#23668881",
-                "<html><a href='#'>xxx</a></html>",
-                "DEC 30,2024 05:18",
-                "300",
+                sp.getMaSanPham(),
+                sp.getTenSanPham(),
+                sp.getGiaBan(),
+                sp.getSoLuongTon(),
                 trashIcon
             });
         }
