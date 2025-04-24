@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import Components.RoundedButton;
+import Components.UserInfoCard;
 import dao.SanPham_DAO;
 import entity.SanPham;
 
@@ -34,6 +35,7 @@ public class OnBoardCard extends JPanel {
 	private JLabel lblAmount;
 	private JLabel dateLabel;
 	private JButton btnDelete;
+	private UserInfoCard card;
 
 	public OnBoardCard() {
 		setLayout(new BorderLayout());
@@ -45,25 +47,25 @@ public class OnBoardCard extends JPanel {
 		title.setFont(new Font("Segoe UI", Font.BOLD, 28));
 		headerPanel.add(title, BorderLayout.WEST);
 
-		JPanel employeeCard = new JPanel();
-		employeeCard.setLayout(new BoxLayout(employeeCard, BoxLayout.X_AXIS));
-		employeeCard.setBackground(Color.WHITE);
-		employeeCard.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-		JLabel iconLabel = new JLabel(new ImageIcon("./icon/employees.png"));
-		iconLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+//		JPanel employeeCard = new JPanel();
+//		employeeCard.setLayout(new BoxLayout(employeeCard, BoxLayout.X_AXIS));
+//		employeeCard.setBackground(Color.WHITE);
+//		employeeCard.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+//		JLabel iconLabel = new JLabel(new ImageIcon("./icon/employees.png"));
+//		iconLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
-		JPanel textPanel = new JPanel();
-		textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-		textPanel.setOpaque(false);
-		JLabel titleLabel = new JLabel("Employees");
-		titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-		JLabel valueLabel = new JLabel("xx");
-		valueLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-		textPanel.add(titleLabel);
-		textPanel.add(valueLabel);
-		employeeCard.add(iconLabel);
-		employeeCard.add(textPanel);
-		headerPanel.add(employeeCard, BorderLayout.EAST);
+//		JPanel textPanel = new JPanel();
+//		textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+//		textPanel.setOpaque(false);
+//		JLabel titleLabel = new JLabel("Employees");
+//		titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+//		JLabel valueLabel = new JLabel("xx");
+//		valueLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+//		textPanel.add(titleLabel);
+//		textPanel.add(valueLabel);
+//		employeeCard.add(iconLabel);
+//		employeeCard.add(textPanel);
+		headerPanel.add(card = new UserInfoCard("./icon/employee.png"), BorderLayout.EAST);
 		add(headerPanel, BorderLayout.NORTH);
 
 		JPanel centerPanel = new JPanel(new BorderLayout(20, 0));
