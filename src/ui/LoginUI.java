@@ -120,9 +120,4 @@ public class LoginUI extends JFrame {
         txtMatKhau.setText("");
         txtTenDangNhap.requestFocus();
     }
-
-
-    public static void main(String[] args) {
-        new LoginUI().setVisible(true);
-    }
 }
