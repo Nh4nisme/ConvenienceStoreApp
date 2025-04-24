@@ -33,7 +33,7 @@ public class Home extends JFrame {
 
     public static void main(String[] args) {
         // Kết nối cơ sở dữ liệu trước khi khởi động UI
-        ConnectDB.getInstance().connect(); 
+        ConnectDB.getInstance().connect();
 
         // Chạy giao diện UI trong một luồng riêng biệt
         SwingUtilities.invokeLater(() -> {

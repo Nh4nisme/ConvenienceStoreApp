@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import Components.UserInfoCard;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 
@@ -15,6 +16,7 @@ public class CustomersCard extends JPanel {
     private DefaultTableModel model;
     private KhachHang_DAO khachHangDAO;
     private JTextField searchField;
+    private UserInfoCard card;
     
     public CustomersCard() {
         khachHangDAO = new KhachHang_DAO();
@@ -23,10 +25,16 @@ public class CustomersCard extends JPanel {
         setBackground(Color.WHITE);
         
         // Tiêu đề
-        JLabel title = new JLabel("Customers");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 0));
-        add(title, BorderLayout.NORTH);
+        JPanel headerPanel = new JPanel(new BorderLayout());
+
+        JLabel title = new JLabel("Customer");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        headerPanel.add(title, BorderLayout.WEST);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+
+        headerPanel.add(card = new UserInfoCard("./icon/employee.png"), BorderLayout.EAST);
+
+        add(headerPanel, BorderLayout.NORTH);
         
         // Panel chức năng (tìm kiếm, thêm, xóa)
         JPanel topPanel = createTopPanel();
