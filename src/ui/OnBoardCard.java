@@ -157,21 +157,26 @@ public class OnBoardCard extends JPanel {
 		        int column = cartTable.columnAtPoint(e.getPoint());
 
 		        if (row >= 0 && column == 3) {
-		            String productId = cartTable.getValueAt(row, 0).toString();
+		            String productName = cartTable.getValueAt(row, 0).toString(); // Tên sản phẩm
 		            int confirm = JOptionPane.showConfirmDialog(null,
-		                    "Bạn có chắc muốn xóa sản phẩm " + productId + " không?",
+		                    "Bạn có chắc muốn xóa sản phẩm " + productName + " không?",
 		                    "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
 		            if (confirm == JOptionPane.YES_OPTION) {
 		                DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
 		                model.removeRow(row);
 		                updateTotalAmount();
+
+		                // Đồng bộ với bảng productTable: set checkbox thành false
+		                for (int i = 0; i < productModel.getRowCount(); i++) {
+		                    if (productModel.getValueAt(i, 2).toString().equals(productName)) {
+		                        productModel.setValueAt(false, i, 0);
+		                        break;
+		                    }
+		                }
 		            }
 		        }
 		    }
 		});
-
-
-
 
 		cartModel.addTableModelListener(e -> {
 		    if (e.getColumn() == 2) {

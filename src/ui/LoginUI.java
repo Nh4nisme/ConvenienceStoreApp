@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import Components.LoadingScreen;
 import Components.RoundedButton;
 import Components.RoundedInputField;
 import Components.RoundedPanel;
