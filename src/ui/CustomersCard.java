@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import Components.RoundedButton;
+import Components.UserInfoCard;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 
@@ -15,26 +17,40 @@ public class CustomersCard extends JPanel {
     private DefaultTableModel model;
     private KhachHang_DAO khachHangDAO;
     private JTextField searchField;
+    private Color buttonColor = new Color(67, 141, 184);
+    private Color textColor = Color.WHITE;
+    private UserInfoCard card;
     
     public CustomersCard() {
         khachHangDAO = new KhachHang_DAO();
         
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Tiêu đề
+        // Header Panel (Title + User Info Card)
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        
         JLabel title = new JLabel("Customers");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 0));
-        add(title, BorderLayout.NORTH);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        headerPanel.add(title, BorderLayout.WEST);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        
+        headerPanel.add(card = new UserInfoCard("./icon/employee.png"), BorderLayout.EAST);
+        
+        add(headerPanel, BorderLayout.NORTH);
         
         // Panel chức năng (tìm kiếm, thêm, xóa)
         JPanel topPanel = createTopPanel();
-        add(topPanel, BorderLayout.CENTER);
         
         // Bảng hiển thị khách hàng
         JPanel tablePanel = createTablePanel();
-        add(tablePanel, BorderLayout.SOUTH);
+        
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(topPanel, BorderLayout.NORTH);
+        centerPanel.add(tablePanel, BorderLayout.CENTER);
+        
+        add(centerPanel, BorderLayout.CENTER);
         
         // Load dữ liệu khách hàng
         loadKhachHangData();
@@ -51,7 +67,9 @@ public class CustomersCard extends JPanel {
         topPanel.add(searchField);
         
         // Nút tìm kiếm
-        JButton searchBtn = new JButton("Search");
+        RoundedButton searchBtn = new RoundedButton("Search", 30);
+        searchBtn.setBackground(buttonColor);
+        searchBtn.setForeground(textColor);
         searchBtn.addActionListener(e -> {
             String searchTerm = searchField.getText().trim();
             if (!searchTerm.isEmpty()) {
@@ -63,17 +81,21 @@ public class CustomersCard extends JPanel {
         topPanel.add(searchBtn);
         
         // Nút thêm mới
-        JButton addBtn = new JButton("Add new Customer");
+        RoundedButton addBtn = new RoundedButton("Add new Customer", 30);
+        addBtn.setBackground(buttonColor);
+        addBtn.setForeground(textColor);
         addBtn.addActionListener(e -> showAddKhachHangDialog());
         topPanel.add(addBtn);
         
         // Nút sửa (chỉ hoạt động khi có hàng được chọn)
-        JButton editBtn = new JButton("Edit");
+        RoundedButton editBtn = new RoundedButton("Edit", 30);
+        editBtn.setBackground(buttonColor);
+        editBtn.setForeground(textColor);
         editBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-            	String maKH = table.getValueAt(selectedRow, 0).toString();
-            	showEditKhachHangDialog(maKH);
+                String maKH = table.getValueAt(selectedRow, 0).toString();
+                showEditKhachHangDialog(maKH);
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một khách hàng để sửa!");
             }
@@ -81,12 +103,14 @@ public class CustomersCard extends JPanel {
         topPanel.add(editBtn);
         
         // Nút xóa (chỉ hoạt động khi có hàng được chọn)
-        JButton deleteBtn = new JButton("Delete");
+        RoundedButton deleteBtn = new RoundedButton("Delete", 30);
+        deleteBtn.setBackground(buttonColor);
+        deleteBtn.setForeground(textColor);
         deleteBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-            	String maKH = table.getValueAt(selectedRow, 0).toString();
-            	deleteKhachHang(maKH);
+                String maKH = table.getValueAt(selectedRow, 0).toString();
+                deleteKhachHang(maKH);
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một khách hàng để xóa!");
             }
@@ -94,7 +118,9 @@ public class CustomersCard extends JPanel {
         topPanel.add(deleteBtn);
         
         // Nút làm mới
-        JButton refreshBtn = new JButton("Refresh");
+        RoundedButton refreshBtn = new RoundedButton("Refresh", 30);
+        refreshBtn.setBackground(buttonColor);
+        refreshBtn.setForeground(textColor);
         refreshBtn.addActionListener(e -> {
             searchField.setText("");
             loadKhachHangData();
@@ -108,7 +134,7 @@ public class CustomersCard extends JPanel {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(Color.WHITE);
         
-        // Các cột của bảng (đã bỏ cột "Actions")
+        // Các cột của bảng
         String[] columns = {"ID Customers", "Name", "Phone", "Accumulated points"};
         
         // Tạo model cho bảng (không cho phép chỉnh sửa)
@@ -193,12 +219,14 @@ public class CustomersCard extends JPanel {
         // Panel nút bấm
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton saveButton = new JButton("Lưu");
+        RoundedButton saveButton = new RoundedButton("Lưu", 30);
+        saveButton.setBackground(buttonColor);
+        saveButton.setForeground(textColor);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                	String ma = maField.getText().trim();
+                    String ma = maField.getText().trim();
                     String ten = tenField.getText().trim();
                     String sdt = sdtField.getText().trim();
                     double diem = Double.parseDouble(diemField.getText().trim());
@@ -208,7 +236,7 @@ public class CustomersCard extends JPanel {
                         return;
                     }
                     
-                    KhachHang kh = new KhachHang( ma, ten, sdt, diem);
+                    KhachHang kh = new KhachHang(ma, ten, sdt, diem);
                     if (khachHangDAO.themKhachHang(kh)) {
                         JOptionPane.showMessageDialog(dialog, "Thêm khách hàng thành công!");
                         dialog.dispose();
@@ -222,7 +250,9 @@ public class CustomersCard extends JPanel {
             }
         });
         
-        JButton cancelButton = new JButton("Hủy");
+        RoundedButton cancelButton = new RoundedButton("Hủy", 30);
+        cancelButton.setBackground(Color.GRAY);
+        cancelButton.setForeground(textColor);
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -279,7 +309,9 @@ public class CustomersCard extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
         final KhachHang finalKhachHang = khachHang;
-        JButton saveButton = new JButton("Lưu");
+        RoundedButton saveButton = new RoundedButton("Lưu", 30);
+        saveButton.setBackground(buttonColor);
+        saveButton.setForeground(textColor);
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -310,7 +342,9 @@ public class CustomersCard extends JPanel {
             }
         });
         
-        JButton cancelButton = new JButton("Hủy");
+        RoundedButton cancelButton = new RoundedButton("Hủy", 30);
+        cancelButton.setBackground(Color.GRAY);
+        cancelButton.setForeground(textColor);
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
