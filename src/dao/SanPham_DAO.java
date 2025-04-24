@@ -23,7 +23,8 @@ public class SanPham_DAO {
                     rs.getString("DonViTinh"),
                     rs.getDouble("GiaBan"),
                     rs.getInt("SoLuongTon"),
-                    rs.getString("MaLoai")
+                    rs.getString("MaLoai"),
+                    rs.getString("LinkAnh")  // Thêm trường linkAnh
                 );
                 ds.add(sp);
             }
@@ -41,12 +42,13 @@ public class SanPham_DAO {
         try {
             ConnectDB.getInstance().connect();
             Connection con = ConnectDB.getConnection();
-            CallableStatement stmt = con.prepareCall("{call sp_ThemSanPham(?,?,?,?,?)}");
+            CallableStatement stmt = con.prepareCall("{call sp_ThemSanPham(?,?,?,?,?,?)}");
             stmt.setString(1, sp.getTenSanPham());
             stmt.setString(2, sp.getDonViTinh());
             stmt.setDouble(3, sp.getGiaBan());
             stmt.setInt(4, sp.getSoLuongTon());
             stmt.setString(5, sp.getMaLoai());
+            stmt.setString(6, sp.getLinkAnh());  // Thêm tham số linkAnh
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Ngoại lệ SQL: Không thể thêm sản phẩm vào cơ sở dữ liệu.");
@@ -62,13 +64,14 @@ public class SanPham_DAO {
         try {
             ConnectDB.getInstance().connect();
             Connection con = ConnectDB.getConnection();
-            CallableStatement stmt = con.prepareCall("{call sp_CapNhatSanPham(?,?,?,?,?,?)}");
+            CallableStatement stmt = con.prepareCall("{call sp_CapNhatSanPham(?,?,?,?,?,?,?)}");
             stmt.setString(1, sp.getMaSanPham());
             stmt.setString(2, sp.getTenSanPham());
             stmt.setString(3, sp.getDonViTinh());
             stmt.setDouble(4, sp.getGiaBan());
             stmt.setInt(5, sp.getSoLuongTon());
             stmt.setString(6, sp.getMaLoai());
+            stmt.setString(7, sp.getLinkAnh());  // Thêm tham số linkAnh
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Ngoại lệ SQL: Không thể cập nhật sản phẩm trong cơ sở dữ liệu.");
@@ -112,7 +115,8 @@ public class SanPham_DAO {
                     rs.getString("DonViTinh"),
                     rs.getDouble("GiaBan"),
                     rs.getInt("SoLuongTon"),
-                    rs.getString("MaLoai")
+                    rs.getString("MaLoai"),
+                    rs.getString("LinkAnh")  // Thêm trường linkAnh
                 );
                 ds.add(sp);
             }
@@ -159,7 +163,8 @@ public class SanPham_DAO {
                     rs.getString("DonViTinh"),
                     rs.getDouble("GiaBan"),
                     rs.getInt("SoLuongTon"),
-                    rs.getString("MaLoai")  
+                    rs.getString("MaLoai"),
+                    rs.getString("LinkAnh")  // Thêm trường linkAnh
                 );
                 ds.add(sp);
             }
@@ -171,5 +176,28 @@ public class SanPham_DAO {
             e.printStackTrace();
         }
         return ds;
+    }
+    
+    public List<String> getTenLoaiSanPham() {
+        List<String> dsTenLoai = new ArrayList<>();
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            String sql = "SELECT DISTINCT l.TenLoai FROM SanPham sp JOIN LoaiSanPham l ON sp.MaLoai = l.MaLoai";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            
+            // Lặp qua các kết quả và thêm vào danh sách
+            while (rs.next()) {
+                dsTenLoai.add(rs.getString("TenLoai"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Ngoại lệ SQL: Không thể lấy tên loại sản phẩm.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Có lỗi không mong muốn xảy ra.");
+            e.printStackTrace();
+        }
+        return dsTenLoai;
     }
 }

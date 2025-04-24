@@ -20,6 +20,7 @@ public class ProductsCard extends JPanel {
 	private RoundedButton removeBtn;
 	SanPham_DAO dao = new SanPham_DAO();
 	List<SanPham> ds = dao.getAllSanPham();
+	List<String> catery = dao.getTenLoaiSanPham();
 
     public ProductsCard() {
         setLayout(new BorderLayout());
@@ -80,9 +81,9 @@ public class ProductsCard extends JPanel {
         JPanel categoryPanel = new JPanel(new GridLayout(2, 6, 10, 10));
         categoryPanel.setBackground(Color.WHITE);
 
-     for (int i = 0; i < 12; i++) {
-         JLabel categoryLabel = new JLabel("Category " + (i + 1));
-         categoryLabel.setHorizontalAlignment(SwingConstants.CENTER);
+     for (int i = 0; i < catery.size(); i++) {
+         JLabel categoryLabel = new JLabel(catery.get(i));
+         categoryLabel.setHorizontalAlignment(SwingConstants.LEFT);
          categoryLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
          categoryPanel.add(categoryLabel);
      }
@@ -93,24 +94,28 @@ public class ProductsCard extends JPanel {
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 0) return Boolean.class;  // Checkbox column
-                if (columnIndex == 5) return Icon.class;     // Icon column
+                if (columnIndex == 0) return Icon.class;  // Cột đầu tiên là Icon
+                if (columnIndex == 5) return Icon.class;  // Cột hành động cũng là Icon
                 return String.class;
             }
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 0; // Only allow checkbox column to be editable
+                return false; // Không cho phép chỉnh sửa ô nào cả
             }
         };
 
+
         JTable table = new JTable(model);
-        table.setRowHeight(30);
+        table.setRowHeight(80);
 
         ImageIcon trashIcon = new ImageIcon("./icon/trash.png");
         for (SanPham sp : ds) {
+        	ImageIcon icon = new ImageIcon("./img/"+ sp.getLinkAnh());
+        	Image img = icon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+        	ImageIcon scaledIcon = new ImageIcon(img);
             model.addRow(new Object[]{
-                false,
+            	scaledIcon,
                 sp.getMaSanPham(),
                 sp.getTenSanPham(),
                 sp.getGiaBan(),
@@ -118,6 +123,25 @@ public class ProductsCard extends JPanel {
                 trashIcon
             });
         }
+        
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int column = table.columnAtPoint(e.getPoint());
+
+                if (column == 5) {
+                    String productId = table.getValueAt(row, 1).toString();
+                    int confirm = JOptionPane.showConfirmDialog(null,
+                            "Bạn có chắc muốn xóa sản phẩm " + productId + " không?",
+                            "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        model.removeRow(row);
+                    }
+                }
+            }
+        });
+
         
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
