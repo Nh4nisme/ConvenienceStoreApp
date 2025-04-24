@@ -11,7 +11,7 @@ public class SiderBar extends JPanel {
     private final String[] menuIcons = {
         "dashboard.png",
         "product.png",
-        "customer.png",
+        "account.png",
         "order.png",
         "onboard.png"
     };

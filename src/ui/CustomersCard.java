@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import Components.UserInfoCard;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 
@@ -16,7 +15,6 @@ public class CustomersCard extends JPanel {
     private DefaultTableModel model;
     private KhachHang_DAO khachHangDAO;
     private JTextField searchField;
-    private UserInfoCard card;
     
     public CustomersCard() {
         khachHangDAO = new KhachHang_DAO();
@@ -25,16 +23,10 @@ public class CustomersCard extends JPanel {
         setBackground(Color.WHITE);
         
         // Tiêu đề
-        JPanel headerPanel = new JPanel(new BorderLayout());
-
-        JLabel title = new JLabel("Customer");
-        title.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        headerPanel.add(title, BorderLayout.WEST);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-
-        headerPanel.add(card = new UserInfoCard("./icon/employee.png"), BorderLayout.EAST);
-
-        add(headerPanel, BorderLayout.NORTH);
+        JLabel title = new JLabel("Customers");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 0));
+        add(title, BorderLayout.NORTH);
         
         // Panel chức năng (tìm kiếm, thêm, xóa)
         JPanel topPanel = createTopPanel();
@@ -80,8 +72,8 @@ public class CustomersCard extends JPanel {
         editBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-                int maKH = (int) table.getValueAt(selectedRow, 0); // Lấy mã KH từ cột 0
-                showEditKhachHangDialog(maKH);
+            	String maKH = table.getValueAt(selectedRow, 0).toString();
+            	showEditKhachHangDialog(maKH);
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một khách hàng để sửa!");
             }
@@ -93,8 +85,8 @@ public class CustomersCard extends JPanel {
         deleteBtn.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-                int maKH = (int) table.getValueAt(selectedRow, 0); // Lấy mã KH từ cột 0
-                deleteKhachHang(maKH);
+            	String maKH = table.getValueAt(selectedRow, 0).toString();
+            	deleteKhachHang(maKH);
             } else {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn một khách hàng để xóa!");
             }
@@ -180,14 +172,17 @@ public class CustomersCard extends JPanel {
         dialog.setSize(400, 250);
         dialog.setLocationRelativeTo(this);
         
-        JPanel formPanel = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         // Các trường nhập liệu
+        JTextField maField = new JTextField(10);
         JTextField tenField = new JTextField(20);
         JTextField sdtField = new JTextField(20);
         JTextField diemField = new JTextField("0", 20);
         
+        formPanel.add(new JLabel("Mã Khách Hàng:"));
+        formPanel.add(maField);
         formPanel.add(new JLabel("Tên Khách Hàng:"));
         formPanel.add(tenField);
         formPanel.add(new JLabel("Số Điện Thoại:"));
@@ -203,6 +198,7 @@ public class CustomersCard extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                	String ma = maField.getText().trim();
                     String ten = tenField.getText().trim();
                     String sdt = sdtField.getText().trim();
                     double diem = Double.parseDouble(diemField.getText().trim());
@@ -212,7 +208,7 @@ public class CustomersCard extends JPanel {
                         return;
                     }
                     
-                    KhachHang kh = new KhachHang(0, ten, sdt, diem);
+                    KhachHang kh = new KhachHang( ma, ten, sdt, diem);
                     if (khachHangDAO.themKhachHang(kh)) {
                         JOptionPane.showMessageDialog(dialog, "Thêm khách hàng thành công!");
                         dialog.dispose();
@@ -242,13 +238,13 @@ public class CustomersCard extends JPanel {
         dialog.setVisible(true);
     }
     
-    private void showEditKhachHangDialog(int maKH) {
+    private void showEditKhachHangDialog(String maKH) {
         // Tìm khách hàng theo mã
         List<KhachHang> dsKhachHang = khachHangDAO.getAllKhachHang();
         KhachHang khachHang = null;
         
         for (KhachHang kh : dsKhachHang) {
-            if (kh.getMaKhachHang() == maKH) {
+            if (kh.getMaKhachHang().equals(maKH)) {
                 khachHang = kh;
                 break;
             }
@@ -330,7 +326,7 @@ public class CustomersCard extends JPanel {
         dialog.setVisible(true);
     }
     
-    private void deleteKhachHang(int maKH) {
+    private void deleteKhachHang(String maKH) {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc chắn muốn xóa khách hàng này không?",
                 "Xác Nhận Xóa",
