@@ -25,41 +25,6 @@ CREATE TABLE TaiKhoan (
     FOREIGN KEY (MaNhanVien) REFERENCES NhanVien(MaNhanVien)
 );
 
-GO
-
-CREATE PROCEDURE sp_Login
-    @TenDangNhap NVARCHAR(50),
-    @MatKhau NVARCHAR(100)
-AS
-BEGIN
-    DECLARE @IsValid BIT;
-
-    -- Kiểm tra tài khoản với tên đăng nhập và mật khẩu
-    SELECT @IsValid = CASE
-                          WHEN COUNT(*) > 0 THEN 1
-                          ELSE 0
-                      END
-    FROM TaiKhoan
-    WHERE TenDangNhap = @TenDangNhap AND MatKhau = @MatKhau AND TrangThai = 1; -- TrangThai = 1 chỉ tài khoản hoạt động
-
-    -- Nếu tài khoản hợp lệ, trả về thông tin tài khoản
-    IF @IsValid = 1
-    BEGIN
-        SELECT TaiKhoan.TenDangNhap, TaiKhoan.MaNhanVien, TaiKhoan.VaiTro, NhanVien.HoTen
-        FROM TaiKhoan
-        JOIN NhanVien ON TaiKhoan.MaNhanVien = NhanVien.MaNhanVien
-        WHERE TaiKhoan.TenDangNhap = @TenDangNhap;
-    END
-    ELSE
-    BEGIN
-        -- Nếu đăng nhập thất bại, trả về thông báo lỗi
-        SELECT NULL AS TenDangNhap, NULL AS MaNhanVien, NULL AS VaiTro, NULL AS HoTen;
-    END
-END
-
-
-
-
 -- ====================== BẢNG CA LÀM VIỆC ======================
 CREATE TABLE CaLamViec (
     MaCa VARCHAR(10) PRIMARY KEY,
@@ -103,6 +68,7 @@ CREATE TABLE SanPham (
     GiaBan DECIMAL(10,2) NOT NULL,
     SoLuongTon INT NOT NULL,
     MaLoai VARCHAR(10),
+    LinkAnh NVARCHAR(255),
     FOREIGN KEY (MaLoai) REFERENCES LoaiSanPham(MaLoai)
 );
 
@@ -128,6 +94,7 @@ CREATE TABLE ChiTietHoaDon (
     FOREIGN KEY (MaSanPham) REFERENCES SanPham(MaSanPham)
 );
 
+-- ====================== KIỂM TRA ĐỊNH DẠNG ======================
 
 -- NHÂN VIÊN: NVxxxxx
 ALTER TABLE NhanVien
@@ -169,7 +136,7 @@ ALTER TABLE ChiTietHoaDon
 ADD CONSTRAINT chk_MaChiTiet_format
 CHECK (MaChiTiet LIKE 'CT[0-9][0-9][0-9][0-9][0-9]');
 
-
+-- ====================== CHÈN DỮ LIỆU ======================
 
 -- 1. Bảng Nhân Viên
 INSERT INTO NhanVien (MaNhanVien, HoTen, SoDienThoai, GioiTinh, NgaySinh, DiaChi)
@@ -208,44 +175,144 @@ VALUES
 -- 5. Bảng Khách Hàng
 INSERT INTO KhachHang (MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy)
 VALUES
-('KH00001', 'Nguyễn Thị Mai', '0912345678', 100),
-('KH00002', 'Trần Minh Tuấn', '0909876543', 200),
-('KH00003', 'Lê Hoàng Nam', '0932134567', 150),
-('KH00004', 'Phạm Ngọc Lan', '0965123456', 50),
-('KH00005', 'Hồ Minh Châu', '0976345678', 300);
+('KH00001', N'Nguyễn Thị Mai', '0912345678', 100),
+('KH00002', N'Trần Minh Tuấn', '0909876543', 200),
+('KH00003', N'Lê Hoàng Nam', '0932134567', 150),
+('KH00004', N'Phạm Ngọc Lan', '0965123456', 50),
+('KH00005', N'Hồ Minh Châu', '0976345678', 300);
 
 -- 6. Bảng Loại Sản Phẩm
 INSERT INTO LoaiSanPham (MaLoai, TenLoai)
 VALUES
-('LS00001', 'Chuột'),
-('LS00002', 'Bàn phím'),
-('LS00003', 'Màn hình'),
-('LS00004', 'Tai nghe'),
-('LS00005', 'Loa');
+('LS00001', N'Nước suối'),
+('LS00002', N'Mì gói'),
+('LS00003', N'Bánh quy'),
+('LS00004', N'Sữa tươi'),
+('LS00005', N'Cá hộp');
 
--- 7. Bảng Sản Phẩm
-INSERT INTO SanPham (MaSanPham, TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai)
+-- 7. Bảng Sản Phẩm[CuaHangTienLoi]
+INSERT INTO SanPham (MaSanPham, TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai, LinkAnh)
 VALUES
-('SP00001', 'Chuột không dây A', 'Cái', 250000, 100, 'LS00001'),
-('SP00002', 'Bàn phím cơ B', 'Cái', 500000, 50, 'LS00002'),
-('SP00003', 'Màn hình 24 inch', 'Cái', 3000000, 30, 'LS00003'),
-('SP00004', 'Tai nghe Bluetooth', 'Cái', 350000, 75, 'LS00004'),
-('SP00005', 'Loa bluetooth', 'Cái', 500000, 60, 'LS00005');
+('SP00001', N'Nước suối Aquafina', 'Chai', 10.00, 100, 'LS00001', 'nuoc_suoi.jpg'),
+('SP00002', N'Mì gói Hảo Hảo', 'Gói', 5.00, 50, 'LS00002', 'mi_haohao.jpg'),
+('SP00003', N'Bánh quy Oreo', 'Hộp', 20.00, 75, 'LS00003', 'banhquy_socola.jpg'),
+('SP00004', N'Sữa tươi Vinamilk', 'Chai', 15.00, 200, 'LS00004', 'sua_tuoi.jpg'),
+('SP00005', N'Cá hộp Hà Nội', 'Hộp', 30.00, 60, 'LS00005', 'cahop.jpg');
 
 -- 8. Bảng Hóa Đơn
-INSERT INTO HoaDon (MaHoaDon, MaNhanVien, MaKhachHang, NgayLap, TongTien)
+INSERT INTO HoaDon (MaHoaDon, MaNhanVien, MaKhachHang, TongTien)
 VALUES
-('HD00001', 'NV00001', 'KH00001', '2025-04-22 08:30', 700000),
-('HD00002', 'NV00002', 'KH00002', '2025-04-22 09:00', 1200000),
-('HD00003', 'NV00003', 'KH00003', '2025-04-22 10:30', 1000000),
-('HD00004', 'NV00004', 'KH00004', '2025-04-22 14:00', 800000),
-('HD00005', 'NV00005', 'KH00005', '2025-04-22 15:30', 1500000);
+('HD00001', 'NV00001', 'KH00001', 100.00),
+('HD00002', 'NV00002', 'KH00002', 200.00),
+('HD00003', 'NV00003', 'KH00003', 150.00),
+('HD00004', 'NV00004', 'KH00004', 50.00),
+('HD00005', 'NV00005', 'KH00005', 300.00);
 
 -- 9. Bảng Chi Tiết Hóa Đơn
 INSERT INTO ChiTietHoaDon (MaChiTiet, MaHoaDon, MaSanPham, SoLuong, DonGia)
 VALUES
-('CT00001', 'HD00001', 'SP00001', 2, 250000),
-('CT00002', 'HD00001', 'SP00002', 1, 500000),
-('CT00003', 'HD00002', 'SP00003', 1, 3000000),
-('CT00004', 'HD00003', 'SP00004', 2, 350000),
-('CT00005', 'HD00004', 'SP00005', 1, 500000);
+('CT00001', 'HD00001', 'SP00001', 10, 10.00),
+('CT00002', 'HD00001', 'SP00002', 5, 5.00),
+('CT00003', 'HD00002', 'SP00003', 2, 20.00),
+('CT00004', 'HD00002', 'SP00004', 3, 15.00),
+('CT00005', 'HD00003', 'SP00005', 3, 30.00);
+
+
+CREATE PROCEDURE sp_Login
+    @TenDangNhap NVARCHAR(50),
+    @MatKhau NVARCHAR(100)
+AS
+BEGIN
+    DECLARE @IsValid BIT;
+
+    -- Kiểm tra tài khoản với tên đăng nhập và mật khẩu
+    SELECT @IsValid = CASE
+                          WHEN COUNT(*) > 0 THEN 1
+                          ELSE 0
+                      END
+    FROM TaiKhoan
+    WHERE TenDangNhap = @TenDangNhap AND MatKhau = @MatKhau AND TrangThai = 1; -- TrangThai = 1 chỉ tài khoản hoạt động
+
+    -- Nếu tài khoản hợp lệ, trả về thông tin tài khoản
+    IF @IsValid = 1
+    BEGIN
+        SELECT TaiKhoan.TenDangNhap, TaiKhoan.MaNhanVien, TaiKhoan.VaiTro, NhanVien.HoTen
+        FROM TaiKhoan
+        JOIN NhanVien ON TaiKhoan.MaNhanVien = NhanVien.MaNhanVien
+        WHERE TaiKhoan.TenDangNhap = @TenDangNhap;
+    END
+    ELSE
+    BEGIN
+        -- Nếu đăng nhập thất bại, trả về thông báo lỗi
+        SELECT NULL AS TenDangNhap, NULL AS MaNhanVien, NULL AS VaiTro, NULL AS HoTen;
+    END
+END
+
+-- get ALL Product
+CREATE PROCEDURE sp_GetAllSanPham
+AS
+BEGIN
+    SELECT * FROM SanPham;
+END
+
+--Create Product
+CREATE PROCEDURE sp_ThemSanPham
+    @TenSanPham NVARCHAR(255),
+    @DonViTinh NVARCHAR(50),
+    @GiaBan FLOAT,
+    @SoLuongTon INT,
+    @MaLoai INT
+AS
+BEGIN
+    INSERT INTO SanPham (TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai)
+    VALUES (@TenSanPham, @DonViTinh, @GiaBan, @SoLuongTon, @MaLoai);
+END
+
+--Update SP
+CREATE PROCEDURE sp_CapNhatSanPham
+    @MaSanPham INT,
+    @TenSanPham NVARCHAR(255),
+    @DonViTinh NVARCHAR(50),
+    @GiaBan FLOAT,
+    @SoLuongTon INT,
+    @MaLoai INT
+AS
+BEGIN
+    UPDATE SanPham
+    SET TenSanPham = @TenSanPham,
+        DonViTinh = @DonViTinh,
+        GiaBan = @GiaBan,
+        SoLuongTon = @SoLuongTon,
+        MaLoai = @MaLoai
+    WHERE MaSanPham = @MaSanPham;
+END
+
+--Delete SP
+CREATE PROCEDURE sp_XoaSanPham
+    @MaSanPham INT
+AS
+BEGIN
+    DELETE FROM SanPham
+    WHERE MaSanPham = @MaSanPham;
+END
+
+--Tim SP
+CREATE PROCEDURE sp_TimSanPhamTheoTen
+    @TenSanPham NVARCHAR(255)
+AS
+BEGIN
+    SELECT * FROM SanPham
+    WHERE TenSanPham LIKE '%' + @TenSanPham + '%';
+END
+
+--Giam SL Ton Kho
+CREATE PROCEDURE sp_GiamSoLuongTon
+    @MaSanPham INT,
+    @SoLuong INT
+AS
+BEGIN
+    UPDATE SanPham
+    SET SoLuongTon = SoLuongTon - @SoLuong
+    WHERE MaSanPham = @MaSanPham AND SoLuongTon >= @SoLuong;
+END
+

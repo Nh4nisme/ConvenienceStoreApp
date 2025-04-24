@@ -8,7 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -19,6 +21,8 @@ import entity.SanPham;
 public class OnBoardCard extends JPanel {
 	SanPham_DAO dao = new SanPham_DAO();
 	List<SanPham> ds = dao.getAllSanPham();
+	List<String> catery = dao.getTenLoaiSanPham();
+	
 	ImageIcon trashIcon = new ImageIcon("./icon/trash.png");
 	private JTable productTable;
 	private JTable cartTable;
@@ -76,10 +80,10 @@ public class OnBoardCard extends JPanel {
 
 		JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		categoryPanel.setBackground(Color.LIGHT_GRAY);
-		for (int i = 0; i < 12; i++) {
-			JLabel categoryBtn = new JLabel("Category");
-			categoryBtn.setPreferredSize(new Dimension(95, 25));
-			categoryPanel.add(categoryBtn);
+		for (int i = 0; i < catery.size(); i++) {
+			JLabel lblCatery = new JLabel(catery.get(i));
+			lblCatery.setPreferredSize(new Dimension(95, 25));
+			categoryPanel.add(lblCatery);
 		}
 		leftPanel.add(categoryPanel, BorderLayout.CENTER);
 
@@ -139,36 +143,34 @@ public class OnBoardCard extends JPanel {
 		    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 		                                                   boolean hasFocus, int row, int column) {
 		        btnDelete = new JButton(trashIcon);
-		        btnDelete.setBorder(null); // bỏ viền nếu cần
-		        btnDelete.setContentAreaFilled(false); // làm trong suốt
+		        btnDelete.setBorder(null);
+		        btnDelete.setContentAreaFilled(false);
 		        return btnDelete;
 		    }
 		});
 		
-		btnDelete = new JButton(trashIcon);
-		btnDelete.setBorder(null);
-		btnDelete.setContentAreaFilled(false);
-		btnDelete.addActionListener(new ActionListener() {
+		// Chỉ sử dụng 1 lần khai báo btnDelete và gắn sự kiện trong cellRenderer
+		cartTable.addMouseListener(new MouseAdapter() {
 		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        int selectedRow = cartTable.getSelectedRow();
-		        if (selectedRow != -1) {
-		            int confirm = JOptionPane.showConfirmDialog(
-		                null,
-		                "Bạn có chắc chắn muốn xóa sản phẩm này?",
-		                "Xác nhận xóa",
-		                JOptionPane.YES_NO_OPTION,
-		                JOptionPane.QUESTION_MESSAGE
-		            );
+		    public void mouseClicked(MouseEvent e) {
+		        int row = cartTable.rowAtPoint(e.getPoint());
+		        int column = cartTable.columnAtPoint(e.getPoint());
+
+		        if (row >= 0 && column == 3) {
+		            String productId = cartTable.getValueAt(row, 0).toString();
+		            int confirm = JOptionPane.showConfirmDialog(null,
+		                    "Bạn có chắc muốn xóa sản phẩm " + productId + " không?",
+		                    "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
 		            if (confirm == JOptionPane.YES_OPTION) {
-		                cartModel.removeRow(selectedRow);
+		                DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+		                model.removeRow(row);
 		                updateTotalAmount();
 		            }
-		        } else {
-		            JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm cần xóa!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 		        }
 		    }
 		});
+
+
 
 
 		cartModel.addTableModelListener(e -> {
@@ -198,7 +200,11 @@ public class OnBoardCard extends JPanel {
 		infoPanel.add(lblAmount);
 
 		infoPanel.add(new JLabel("Date"));
-		dateLabel = new JLabel(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), JLabel.RIGHT);
+		dateLabel = new JLabel(
+			    LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
+			    JLabel.RIGHT
+			);
+
 		infoPanel.add(dateLabel);
 
 		checkoutButton = new RoundedButton("Check Out", 10);
@@ -259,13 +265,15 @@ public class OnBoardCard extends JPanel {
 	
 	private void updateCart() {
 	    double total = 0.0;
+	    int totalQuantity = 0;
 	    for (int i = 0; i < cartModel.getRowCount(); i++) {
 	        double price = Double.parseDouble(cartModel.getValueAt(i, 1).toString());
 	        int quantity = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
 	        total += price * quantity;
+	        totalQuantity += quantity;
 	    }
 	    totalAmountLabel.setText(String.format("%,.3f VND", total));
-	    
+	    lblAmount.setText(String.valueOf(totalQuantity));
 	}
 
 	private void updateCart(int row, int newQuantity) {
@@ -285,6 +293,7 @@ public class OnBoardCard extends JPanel {
 	    totalAmountLabel.setText(String.format("%,.3f VND", total));
 	    lblAmount.setText(String.valueOf(totalQuantity));
 	}
+
 
 	
 
