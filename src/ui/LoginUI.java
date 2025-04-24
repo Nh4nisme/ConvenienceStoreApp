@@ -3,11 +3,16 @@ package ui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import Components.RoundedButton;
 import Components.RoundedInputField;
 import Components.RoundedPanel;
 import Session.Session;
+import dao.CaLamViec_DAO;
+import dao.NhanVienCaLamViec_DAO;
 import entity.TaiKhoan;
 import dao.TaiKhoan_DAO;
 
@@ -100,6 +105,7 @@ public class LoginUI extends JFrame {
         if (tk != null) {
             JOptionPane.showMessageDialog(this, "Đăng nhập thành công " + tk.getVaiTro());
             Session.getInstance().login(tk);
+            logCurrentShift();
             openHomeScreen();
         } else {
             JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không chính xác!");
@@ -107,6 +113,30 @@ public class LoginUI extends JFrame {
 
         Clear();
     }
+
+    private void logCurrentShift() {
+        TaiKhoan tk = Session.getInstance().getTaiKhoan();
+        if (tk == null) {
+            System.err.println("No user session found! Cannot log shift.");
+            return;
+        }
+
+        String maNV = tk.getNhanVien().getMaNhanVien();
+        String maCa = new CaLamViec_DAO().getMaCaFromCurrentTime();
+        LocalDateTime gioVao = LocalDateTime.now();
+
+        if (maCa != null) {
+            int result = new NhanVienCaLamViec_DAO().insertShift(maNV, maCa, gioVao);
+            if (result == 1) {
+                System.out.println("Shift logged successfully");
+            } else {
+                System.out.println("Failed to log shift.");
+            }
+        } else {
+            System.out.println("No valid shift at this time.");
+        }
+    }
+
 
     private void openHomeScreen() {
         Home home = new Home();

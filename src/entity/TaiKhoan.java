@@ -1,10 +1,9 @@
 package entity;
 
-
 public class TaiKhoan {
     private String tenDangNhap;
     private String matKhau;
-    private String maNhanVien;
+    private NhanVien nv;
     private String vaiTro;
     private boolean trangThai;
 
@@ -24,12 +23,12 @@ public class TaiKhoan {
         this.matKhau = matKhau;
     }
 
-    public String getMaNhanVien() {
-        return maNhanVien;
+    public NhanVien getNhanVien() {  // Getter for NhanVien
+        return nv;
     }
 
-    public void setMaNhanVien(String maNhanVien) {
-        this.maNhanVien = maNhanVien;
+    public void setNhanVien(NhanVien nv) {  // Setter for NhanVien
+        this.nv = nv;
     }
 
     public String getVaiTro() {
