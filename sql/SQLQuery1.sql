@@ -284,36 +284,38 @@ GO
 
 --Create Product
 CREATE PROCEDURE sp_ThemSanPham
+    @MaSanPham VARCHAR(10),
     @TenSanPham NVARCHAR(255),
     @DonViTinh NVARCHAR(50),
     @GiaBan FLOAT,
     @SoLuongTon INT,
-    @MaLoai INT
+    @MaLoai VARCHAR(10),
+    @LinkAnh NVARCHAR(255)
 AS
 BEGIN
-INSERT INTO SanPham (TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai)
-VALUES (@TenSanPham, @DonViTinh, @GiaBan, @SoLuongTon, @MaLoai);
+    INSERT INTO SanPham (MaSanPham, TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai, LinkAnh)
+    VALUES (@MaSanPham, @TenSanPham, @DonViTinh, @GiaBan, @SoLuongTon, @MaLoai, @LinkAnh);
 END
-
-GO
 
 --Update SP
 CREATE PROCEDURE sp_CapNhatSanPham
-    @MaSanPham INT,
-    @TenSanPham NVARCHAR(255),
-    @DonViTinh NVARCHAR(50),
-    @GiaBan FLOAT,
-    @SoLuongTon INT,
-    @MaLoai INT
+   @MaSanPham VARCHAR(10), 
+    @TenSanPham NVARCHAR(100), 
+    @DonViTinh NVARCHAR(20), 
+    @GiaBan DECIMAL(10,2), 
+    @SoLuongTon INT, 
+    @MaLoai VARCHAR(10), 
+    @LinkAnh NVARCHAR(255)
 AS
 BEGIN
-UPDATE SanPham
-SET TenSanPham = @TenSanPham,
-    DonViTinh = @DonViTinh,
-    GiaBan = @GiaBan,
-    SoLuongTon = @SoLuongTon,
-    MaLoai = @MaLoai
-WHERE MaSanPham = @MaSanPham;
+   UPDATE SanPham
+    SET TenSanPham = @TenSanPham,
+        DonViTinh = @DonViTinh,
+        GiaBan = @GiaBan,
+        SoLuongTon = @SoLuongTon,
+        MaLoai = @MaLoai,
+        LinkAnh = @LinkAnh
+    WHERE MaSanPham = @MaSanPham;
 END
 
 GO

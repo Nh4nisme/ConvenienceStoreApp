@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import connect.ConnectDB;
 import entity.SanPham;
 
@@ -18,13 +20,13 @@ public class SanPham_DAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 SanPham sp = new SanPham(
-                    rs.getString("MaSanPham"),
-                    rs.getString("TenSanPham"),
-                    rs.getString("DonViTinh"),
-                    rs.getDouble("GiaBan"),
-                    rs.getInt("SoLuongTon"),
-                    rs.getString("MaLoai"),
-                    rs.getString("LinkAnh")  // Thêm trường linkAnh
+                        rs.getString("MaSanPham"),
+                        rs.getString("TenSanPham"),
+                        rs.getString("DonViTinh"),
+                        rs.getDouble("GiaBan"),
+                        rs.getInt("SoLuongTon"),
+                        rs.getString("MaLoai"),
+                        rs.getString("LinkAnh")
                 );
                 ds.add(sp);
             }
@@ -42,14 +44,19 @@ public class SanPham_DAO {
         try {
             ConnectDB.getInstance().connect();
             Connection con = ConnectDB.getConnection();
-            CallableStatement stmt = con.prepareCall("{call sp_ThemSanPham(?,?,?,?,?,?)}");
-            stmt.setString(1, sp.getTenSanPham());
-            stmt.setString(2, sp.getDonViTinh());
-            stmt.setDouble(3, sp.getGiaBan());
-            stmt.setInt(4, sp.getSoLuongTon());
-            stmt.setString(5, sp.getMaLoai());
-            stmt.setString(6, sp.getLinkAnh());  // Thêm tham số linkAnh
-            return stmt.executeUpdate() > 0;
+
+            CallableStatement stmt = con.prepareCall("{call sp_ThemSanPham(?,?,?,?,?,?,?)}");
+
+            stmt.setString(1, sp.getMaSanPham());
+            stmt.setString(2, sp.getTenSanPham());
+            stmt.setString(3, sp.getDonViTinh());
+            stmt.setDouble(4, sp.getGiaBan());
+            stmt.setInt(5, sp.getSoLuongTon());
+            stmt.setString(6, sp.getMaLoai());
+            stmt.setString(7, sp.getLinkAnh());
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             System.err.println("Ngoại lệ SQL: Không thể thêm sản phẩm vào cơ sở dữ liệu.");
             e.printStackTrace();
@@ -64,6 +71,7 @@ public class SanPham_DAO {
         try {
             ConnectDB.getInstance().connect();
             Connection con = ConnectDB.getConnection();
+
             CallableStatement stmt = con.prepareCall("{call sp_CapNhatSanPham(?,?,?,?,?,?,?)}");
             stmt.setString(1, sp.getMaSanPham());
             stmt.setString(2, sp.getTenSanPham());
@@ -71,8 +79,10 @@ public class SanPham_DAO {
             stmt.setDouble(4, sp.getGiaBan());
             stmt.setInt(5, sp.getSoLuongTon());
             stmt.setString(6, sp.getMaLoai());
-            stmt.setString(7, sp.getLinkAnh());  // Thêm tham số linkAnh
-            return stmt.executeUpdate() > 0;
+            stmt.setString(7, sp.getLinkAnh());
+
+            int rows = stmt.executeUpdate();
+            return rows > 0;
         } catch (SQLException e) {
             System.err.println("Ngoại lệ SQL: Không thể cập nhật sản phẩm trong cơ sở dữ liệu.");
             e.printStackTrace();
@@ -82,6 +92,10 @@ public class SanPham_DAO {
         }
         return false;
     }
+
+
+
+
 
     public boolean xoaSanPham(String maSP) {
         try {
@@ -100,25 +114,24 @@ public class SanPham_DAO {
         return false;
     }
 
-    public List<SanPham> timTheoTen(String ten) {
-        List<SanPham> ds = new ArrayList<>();
+    public SanPham timTheoMa(String ma) {
+        SanPham sp = null;
         try {
             ConnectDB.getInstance().connect();
             Connection con = ConnectDB.getConnection();
-            CallableStatement stmt = con.prepareCall("{call sp_TimSanPhamTheoTen(?)}");
-            stmt.setString(1, ten);
+            CallableStatement stmt = con.prepareCall("{call sp_TimSanPhamTheoMa(?)}");
+            stmt.setString(1, ma);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                SanPham sp = new SanPham(
-                    rs.getString("MaSanPham"),
-                    rs.getString("TenSanPham"),
-                    rs.getString("DonViTinh"),
-                    rs.getDouble("GiaBan"),
-                    rs.getInt("SoLuongTon"),
-                    rs.getString("MaLoai"),
-                    rs.getString("LinkAnh")  // Thêm trường linkAnh
+                sp = new SanPham(
+                        rs.getString("MaSanPham"),
+                        rs.getString("TenSanPham"),
+                        rs.getString("DonViTinh"),
+                        rs.getDouble("GiaBan"),
+                        rs.getInt("SoLuongTon"),
+                        rs.getString("MaLoai"),
+                        rs.getString("LinkAnh")
                 );
-                ds.add(sp);
             }
         } catch (SQLException e) {
             System.err.println("Ngoại lệ SQL: Không thể tìm sản phẩm theo tên.");
@@ -127,7 +140,7 @@ public class SanPham_DAO {
             System.err.println("Có lỗi không mong muốn xảy ra.");
             e.printStackTrace();
         }
-        return ds;
+        return sp;
     }
 
     public boolean giamSoLuongTon(String maSP, int soLuong) {
@@ -158,13 +171,13 @@ public class SanPham_DAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 SanPham sp = new SanPham(
-                    rs.getString("MaSanPham"),  
-                    rs.getString("TenSanPham"),
-                    rs.getString("DonViTinh"),
-                    rs.getDouble("GiaBan"),
-                    rs.getInt("SoLuongTon"),
-                    rs.getString("MaLoai"),
-                    rs.getString("LinkAnh")  // Thêm trường linkAnh
+                        rs.getString("MaSanPham"),
+                        rs.getString("TenSanPham"),
+                        rs.getString("DonViTinh"),
+                        rs.getDouble("GiaBan"),
+                        rs.getInt("SoLuongTon"),
+                        rs.getString("MaLoai"),
+                        rs.getString("LinkAnh")
                 );
                 ds.add(sp);
             }
@@ -177,7 +190,7 @@ public class SanPham_DAO {
         }
         return ds;
     }
-    
+
     public List<String> getTenLoaiSanPham() {
         List<String> dsTenLoai = new ArrayList<>();
         try {
@@ -186,7 +199,7 @@ public class SanPham_DAO {
             String sql = "SELECT DISTINCT l.TenLoai FROM SanPham sp JOIN LoaiSanPham l ON sp.MaLoai = l.MaLoai";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            
+
             // Lặp qua các kết quả và thêm vào danh sách
             while (rs.next()) {
                 dsTenLoai.add(rs.getString("TenLoai"));
