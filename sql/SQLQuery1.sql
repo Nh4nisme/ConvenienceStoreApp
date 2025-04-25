@@ -244,7 +244,6 @@ WHERE TaiKhoan.TenDangNhap = @TenDangNhap;
 END
 ELSE
 BEGIN
-        -- Nếu đăng nhập thất bại, trả về thông báo lỗi
 SELECT NULL AS TenDangNhap, NULL AS MaNhanVien, NULL AS VaiTro, NULL AS HoTen;
 END
 END
@@ -360,7 +359,6 @@ CREATE PROCEDURE sp_InsertShift
     @GioVao DATETIME
 AS
 BEGIN
-    -- Kiểm tra xem ca làm việc đã tồn tại chưa
     IF NOT EXISTS (SELECT 1 FROM NhanVien_CaLamViec WHERE MaNhanVien = @MaNhanVien AND MaCa = @MaCa AND NgayLam = CAST(@GioVao AS DATE))
 BEGIN
         -- Nếu không tồn tại, thực hiện chèn
