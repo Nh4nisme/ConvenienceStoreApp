@@ -250,6 +250,30 @@ END
 END
 
 GO
+
+CREATE PROCEDURE sp_UpdatePassword
+    @username NVARCHAR(50),
+    @newPassword NVARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (SELECT 1 FROM TaiKhoan WHERE TenDangNhap = @username)
+BEGIN
+UPDATE TaiKhoan
+SET MatKhau = @newPassword
+WHERE TenDangNhap = @username;
+
+RETURN 1; -- Success
+END
+ELSE
+BEGIN
+RETURN -1; -- User not found
+END
+END
+
+GO
+
 -- get ALL Product
 CREATE PROCEDURE sp_GetAllSanPham
     AS
@@ -327,4 +351,60 @@ UPDATE SanPham
 SET SoLuongTon = SoLuongTon - @SoLuong
 WHERE MaSanPham = @MaSanPham AND SoLuongTon >= @SoLuong;
 END
+
+GO
+
+CREATE PROCEDURE sp_InsertShift
+    @MaNhanVien VARCHAR(10),
+    @MaCa VARCHAR(10),
+    @GioVao DATETIME
+AS
+BEGIN
+    -- Kiểm tra xem ca làm việc đã tồn tại chưa
+    IF NOT EXISTS (SELECT 1 FROM NhanVien_CaLamViec WHERE MaNhanVien = @MaNhanVien AND MaCa = @MaCa AND NgayLam = CAST(@GioVao AS DATE))
+BEGIN
+        -- Nếu không tồn tại, thực hiện chèn
+INSERT INTO NhanVien_CaLamViec (MaNhanVien, MaCa, NgayLam, GioVao)
+VALUES (@MaNhanVien, @MaCa, CAST(@GioVao AS DATE), @GioVao);
+END
+END
+
+GO
+
+CREATE PROCEDURE sp_UpdateGioRaNhanVien
+    @MaNhanVien VARCHAR(10),
+    @MaCa VARCHAR(10)
+AS
+BEGIN
+    DECLARE @rowsAffected INT;
+
+UPDATE NhanVien_CaLamViec
+SET GioRa = GETDATE()
+WHERE MaNhanVien = @MaNhanVien
+  AND MaCa = @MaCa
+  AND CAST(NgayLam AS DATE) = CAST(GETDATE() AS DATE);
+
+SET @rowsAffected = @@ROWCOUNT;
+
+RETURN @rowsAffected;
+END
+
+
+GO
+
+CREATE PROCEDURE sp_GetShiftsByEmployeeID
+    @MaNhanVien VARCHAR(10)
+AS
+BEGIN
+SELECT
+    MaCa,
+    NgayLam,
+    CAST(GioVao AS DATETIME) AS GioVao,
+    CAST(GioRa AS DATETIME) AS GioRa
+FROM NhanVien_CaLamViec
+WHERE MaNhanVien = @MaNhanVien
+ORDER BY
+    NgayLam DESC, GioVao;
+END
+
 
