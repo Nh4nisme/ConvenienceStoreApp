@@ -2,7 +2,10 @@ package dao;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -93,10 +96,6 @@ public class SanPham_DAO {
         return false;
     }
 
-
-
-
-
     public boolean xoaSanPham(String maSP) {
         try {
             ConnectDB.getInstance().connect();
@@ -141,6 +140,36 @@ public class SanPham_DAO {
             e.printStackTrace();
         }
         return sp;
+    }
+    
+    public String timMaSanPhamTheoTen(String tenSanPham) {
+        String maSanPham = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Connection con = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT MaSanPham FROM SanPham WHERE TenSanPham = ?";
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, tenSanPham);
+
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                maSanPham = rs.getString("MaSanPham");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return maSanPham;
     }
 
     public boolean giamSoLuongTon(String maSP, int soLuong) {
@@ -213,4 +242,64 @@ public class SanPham_DAO {
         }
         return dsTenLoai;
     }
+    
+    public String[][] getTopSanPhamBanChayAsArray() {
+        List<String[]> list = new ArrayList<>();
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            CallableStatement stmt = con.prepareCall("{call sp_TopSanPhamBanChay}");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String tenSanPham = rs.getString("TenSanPham");
+                String soLuong = String.valueOf(rs.getInt("TongSoLuongBan"));
+                list.add(new String[]{tenSanPham, soLuong});
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list.toArray(new String[0][2]);
+    }
+    
+    public String[][] getDoanhThuTuanTrongThang() {
+        List<String[]> list = new ArrayList<>();
+        try {
+            // Kết nối đến cơ sở dữ liệu
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            
+            // Gọi thủ tục lưu trữ sp_DoanhThuTuanTrongThang
+            CallableStatement stmt = con.prepareCall("{call sp_DoanhThuTuanTrongThang}");
+            ResultSet rs = stmt.executeQuery();
+            
+            // Chuẩn bị một map để lưu trữ doanh thu của từng tuần
+            Map<Integer, Double> revenueMap = new HashMap<>();
+            
+            // Xử lý kết quả truy vấn
+            while (rs.next()) {
+                int week = rs.getInt("Tuan");
+                double doanhThu = rs.getDouble("DoanhThu");
+                revenueMap.put(week, doanhThu);
+            }
+            
+            // Lấy tuần đầu tiên và tuần cuối cùng trong tháng để đảm bảo có tất cả các tuần
+            int firstWeek = 1;  // Tuần đầu tiên của tháng luôn là tuần 1
+            int lastWeek = 4;   // Tháng có tối đa 4 tuần
+            
+            // Duyệt qua tất cả các tuần trong tháng
+            for (int week = firstWeek; week <= lastWeek; week++) {
+                double doanhThu = revenueMap.getOrDefault(week, 0.0);  // Mặc định là 0 nếu không có doanh thu cho tuần
+                list.add(new String[]{String.valueOf(week), String.format("%.2f", doanhThu)});
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return list.toArray(new String[0][2]);
+    }
+
+
 }

@@ -87,6 +87,31 @@ public class KhachHang_DAO {
 	    }
 	    return false;
 	}
+	
+	public boolean capNhatDiem(String maKhachHang, double tongTien) {
+	    try {
+	        Connection con = ins.getConnection();
+	        CallableStatement stmt = con.prepareCall("{call CapNhatDiemTichLuy(?, ?)}");
+
+	        stmt.setString(1, maKhachHang);
+	        stmt.setDouble(2, tongTien*1000);
+
+	        boolean success = stmt.executeUpdate() > 0;
+
+	        if (success) {
+	            System.out.println("✔️ Cập nhật điểm " + tongTien + "thành công cho khách hàng: " + maKhachHang);
+	        } else {
+	            System.out.println("❌ Cập nhật điểm thất bại cho khách hàng: " + maKhachHang);
+	        }
+
+	        return success;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
+
 
 	public boolean xoaKhachHang(String maKH) {
         try {

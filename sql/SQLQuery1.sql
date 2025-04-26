@@ -322,7 +322,7 @@ GO
 
 --Delete SP
 CREATE PROCEDURE sp_XoaSanPham
-    @MaSanPham INT
+    @MaSanPham VARCHAR(10)
 AS
 BEGIN
 DELETE FROM SanPham
@@ -344,7 +344,7 @@ GO
 
 --Giam SL Ton Kho
 CREATE PROCEDURE sp_GiamSoLuongTon
-    @MaSanPham INT,
+    @MaSanPham VARCHAR(10),
     @SoLuong INT
 AS
 BEGIN
@@ -406,5 +406,60 @@ WHERE MaNhanVien = @MaNhanVien
 ORDER BY
     NgayLam DESC, GioVao;
 END
+
+GO
+
+CREATE PROCEDURE sp_TopSanPhamBanChay
+AS
+BEGIN
+    SELECT TOP 5 
+        sp.TenSanPham,
+        SUM(ct.SoLuong) AS TongSoLuongBan
+    FROM ChiTietHoaDon ct
+    JOIN SanPham sp ON ct.MaSanPham = sp.MaSanPham
+    GROUP BY sp.MaSanPham, sp.TenSanPham
+    ORDER BY TongSoLuongBan DESC
+END
+
+GO
+CREATE PROCEDURE sp_DoanhThuTuanTrongThang
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Lấy ngày đầu và cuối tháng hiện tại
+    DECLARE @NgayDauThang DATE = DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);
+    DECLARE @NgayCuoiThang DATE = EOMONTH(@NgayDauThang);
+
+    -- Tính doanh thu theo tuần trong tháng (chú ý tới việc tính tuần)
+    SELECT 
+        DATEPART(WEEK, NgayLap) - DATEPART(WEEK, @NgayDauThang) + 1 AS Tuan,
+        SUM(TongTien) AS DoanhThu
+    FROM HoaDon
+    WHERE NgayLap >= @NgayDauThang AND NgayLap <= @NgayCuoiThang
+    GROUP BY DATEPART(WEEK, NgayLap)
+    ORDER BY DATEPART(WEEK, NgayLap);
+END;
+
+GO
+CREATE PROCEDURE CapNhatDiemTichLuy
+    @MaKhachHang VARCHAR(10),
+    @TongTien DECIMAL(10,2)
+AS
+BEGIN
+    DECLARE @DiemMoi INT;
+
+
+    SET @DiemMoi = FLOOR(@TongTien / 10000);
+
+
+    IF EXISTS (SELECT 1 FROM KhachHang WHERE MaKhachHang = @MaKhachHang)
+    BEGIN
+        UPDATE KhachHang
+        SET DiemTichLuy = DiemTichLuy + @DiemMoi
+        WHERE MaKhachHang = @MaKhachHang;
+    END
+END
+
 
 
