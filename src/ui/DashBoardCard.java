@@ -1,21 +1,30 @@
 package ui;
 
 import Components.UserInfoCard;
+import entity.SanPham;
 import entity.TaiKhoan;
 import Session.Session;
+import dao.SanPham_DAO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+
 import java.awt.*;
+import java.util.Map;
 
 public class DashBoardCard extends JPanel {
+	private SanPham_DAO daoSP = new SanPham_DAO();
 
     private final String[][] weeks = {
         {"Week1", "xxx"}, {"Week2", "xxx"}, {"Week3", "xxx"}
     };
-    private final String[][] items = {
-        {"Soda", "xxx"}, {"Cookies", "xxx"}, {"Condom", "xxx"}
-    };
+    
     private final String[][] employees = {
         {"xxx", "ID"}, {"xxx", "ID"}, {"xxx", "ID"}
     };
@@ -46,8 +55,8 @@ public class DashBoardCard extends JPanel {
 
         JPanel grid2x2 = new JPanel(new GridLayout(2, 2, 15, 15));
         grid2x2.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-        grid2x2.add(createListPanel("Top Products", items));
-        grid2x2.add(createListPanel("Revenue", weeks));
+        grid2x2.add(createListPanel("Top Products", daoSP.getTopSanPhamBanChayAsArray()));
+        grid2x2.add(createLineChartPanel("Revenue", daoSP.getDoanhThuTuanTrongThang()));
         grid2x2.add(createListPanel("Top Employees", employees));
         grid2x2.add(createTablePanel());
 
@@ -112,6 +121,44 @@ public class DashBoardCard extends JPanel {
 
         return panel;
     }
+    
+    private JPanel createLineChartPanel(String title, String[][] data) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel lblTitle = new JLabel(title);
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        panel.add(lblTitle, BorderLayout.NORTH);
+
+        // Tạo dataset cho biểu đồ
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (int i = 0; i < data.length; i++) {
+            String week = data[i][0];
+            double revenue = Double.parseDouble(data[i][1]);  // Chuyển doanh thu sang số
+            dataset.addValue(revenue, "Doanh Thu", week);  // Dữ liệu biểu đồ
+        }
+
+        // Tạo biểu đồ đường
+        JFreeChart lineChart = ChartFactory.createLineChart(
+                "Doanh Thu Theo Tuần", // Tiêu đề biểu đồ
+                "Tuần",                // Tiêu đề trục X
+                "Doanh Thu",           // Tiêu đề trục Y
+                dataset,               // Dữ liệu biểu đồ
+                PlotOrientation.VERTICAL,
+                true,                  // Hiển thị Legend
+                true,                  // Hiển thị tooltips
+                false                  // Không hiển thị URL
+        );
+
+        // Thêm biểu đồ vào panel
+        ChartPanel chartPanel = new ChartPanel(lineChart);
+        chartPanel.setPreferredSize(new Dimension(500, 300));
+        panel.add(chartPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
 
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -138,4 +185,6 @@ public class DashBoardCard extends JPanel {
         panel.add(scroll, BorderLayout.CENTER);
         return panel;
     }
+   
+
 }
