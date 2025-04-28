@@ -87,6 +87,31 @@ public class KhachHang_DAO {
 	    }
 	    return false;
 	}
+	
+	public boolean capNhatDiem(String maKhachHang, double tongTien) {
+	    try {
+	        Connection con = ins.getConnection();
+	        CallableStatement stmt = con.prepareCall("{call CapNhatDiemTichLuy(?, ?)}");
+
+	        stmt.setString(1, maKhachHang);
+	        stmt.setDouble(2, tongTien*1000);
+
+	        boolean success = stmt.executeUpdate() > 0;
+
+	        if (success) {
+	            System.out.println("✔️ Cập nhật điểm " + tongTien + "thành công cho khách hàng: " + maKhachHang);
+	        } else {
+	            System.out.println("❌ Cập nhật điểm thất bại cho khách hàng: " + maKhachHang);
+	        }
+
+	        return success;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
+
 
 	public boolean xoaKhachHang(String maKH) {
         try {
@@ -100,19 +125,12 @@ public class KhachHang_DAO {
         return false;
     }
 
-	public List<KhachHang> timKiemKhachHang(String searchTerm) {
+	public List<KhachHang> timTheoTen(String ten) {
 	    List<KhachHang> ds = new ArrayList<>();
 	    try {
 	        Connection con = ins.getConnection();
-	        PreparedStatement stmt = con.prepareStatement(
-	            "SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy " +
-	            "FROM KhachHang " +
-	            "WHERE MaKhachHang LIKE ? OR TenKhachHang LIKE ? OR SoDienThoai LIKE ?"
-	        );
-	        String wildcardTerm = "%" + searchTerm + "%";
-	        stmt.setString(1, wildcardTerm);
-	        stmt.setString(2, wildcardTerm);
-	        stmt.setString(3, wildcardTerm);
+	        PreparedStatement stmt = con.prepareStatement("SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy FROM KhachHang WHERE TenKhachHang LIKE ?");
+	        stmt.setString(1, "%" + ten + "%");
 	        ResultSet rs = stmt.executeQuery();
 	        while (rs.next()) {
 	            KhachHang kh = new KhachHang(
@@ -129,6 +147,26 @@ public class KhachHang_DAO {
 	    return ds;
 	}
 
+	public KhachHang timTheoSDT(String sdt) {
+	    KhachHang kh = null;
+	    try {
+	        Connection con = ins.getConnection();
+	        PreparedStatement stmt = con.prepareStatement("SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy FROM KhachHang WHERE SoDienThoai = ?");
+	        stmt.setString(1, sdt);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            kh = new KhachHang(
+	                rs.getString("MaKhachHang"),
+	                rs.getString("TenKhachHang"),
+	                rs.getString("SoDienThoai"),
+	                rs.getDouble("DiemTichLuy")
+	            );
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return kh;
+	}
 
 	public boolean capNhatDiemTichLuy(int maKH, double diemMoi) {
 	    try {

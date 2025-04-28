@@ -7,9 +7,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.sql.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import Components.RoundedButton;
 import Components.UserInfoCard;
@@ -68,7 +66,7 @@ public class OrdersCard extends JPanel {
         topPanel.setBackground(Color.WHITE);
 
         // Search components
-        topPanel.add(new JLabel("Find: "));
+        topPanel.add(new JLabel("Find by Customer ID:"));
         searchField = new JTextField(10);
         topPanel.add(searchField);
 
@@ -198,22 +196,13 @@ public class OrdersCard extends JPanel {
         }
     }
 
-    private void searchOrdersByCustomer(String searchValue) {
+    private void searchOrdersByCustomer(String maKH) {
         ordersModel.setRowCount(0);
-        
-        // Tìm kiếm theo cả hai tiêu chí
-        List<HoaDon> listByCustomer = hoaDonDAO.getHoaDon(searchValue, "BY_MA_KHACH_HANG");
-        List<HoaDon> listByOrderId = hoaDonDAO.getHoaDon(searchValue, "BY_MA_HOA_DON");
-        
-        Set<HoaDon> combinedResults = new HashSet<>();
-        combinedResults.addAll(listByCustomer);
-        combinedResults.addAll(listByOrderId);
-        
-        // Hiển thị kết quả
-        for (HoaDon hd : combinedResults) {
+        List<HoaDon> list = hoaDonDAO.getHoaDonTheoKhachHang(maKH);
+        for (HoaDon hd : list) {
             KhachHang kh = hoaDonDAO.getKhachHangByMa(hd.getMaKhachHang());
             String tenKhachHang = (kh != null) ? kh.getTenKhachHang() : "Unknown";
-
+            
             ordersModel.addRow(new Object[]{
                 hd.getMaHoaDon(),
                 hd.getNgayLap(),
@@ -247,19 +236,19 @@ public class OrdersCard extends JPanel {
 
     private void loadOrderDetails(String maHD) {
         detailsModel.setRowCount(0);
-        List<HoaDon> hdList = hoaDonDAO.getHoaDon(maHD, "BY_MA_HOA_DON");
-        if (!hdList.isEmpty()) {
-            HoaDon hd = hdList.get(0); // Lấy hóa đơn đầu tiên (chỉ có một hóa đơn)
+        HoaDon hd = hoaDonDAO.getHoaDonTheoMa(maHD);
+        if (hd != null) {
             for (var ct : hd.getDanhSachChiTiet()) {
+                // Lấy thông tin sản phẩm từ database
                 SanPham sp = hoaDonDAO.getSanPhamByMa(ct.getMaSanPham());
                 String tenSanPham = (sp != null) ? sp.getTenSanPham() : "Unknown";
                 
                 detailsModel.addRow(new Object[]{
-                    ct.getMaSanPham(),
-                    tenSanPham,
-                    ct.getSoLuong(),
-                    formatCurrency(ct.getDonGia()),
-                    formatCurrency(ct.getThanhTien())
+                    ct.getMaSanPham(),     // Mã sản phẩm
+                    tenSanPham,            // Tên sản phẩm
+                    ct.getSoLuong(),       // Số lượng
+                    formatCurrency(ct.getDonGia()),  // Đơn giá
+                    formatCurrency(ct.getThanhTien()) // Thành tiền
                 });
             }
         }

@@ -174,10 +174,13 @@ public class CustomersCard extends JPanel {
     }
     
     private void searchKhachHang(String searchTerm) {
+        // Xóa dữ liệu cũ
         model.setRowCount(0);
         
-        List<KhachHang> dsKhachHang = khachHangDAO.timKiemKhachHang(searchTerm);
+        // Tìm khách hàng theo tên
+        List<KhachHang> dsKhachHang = khachHangDAO.timTheoTen(searchTerm);
         
+        // Thêm dữ liệu vào bảng
         for (KhachHang kh : dsKhachHang) {
             model.addRow(new Object[]{
                 kh.getMaKhachHang(),
