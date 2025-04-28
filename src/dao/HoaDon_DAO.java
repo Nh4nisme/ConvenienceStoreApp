@@ -76,56 +76,28 @@ public class HoaDon_DAO {
         return ds;
     }
     
-    // Lấy hóa đơn theo mã
-    public HoaDon getHoaDonTheoMa(String maHoaDon) {
-        HoaDon hd = null;
-        try {
-            Connection con = ins.getConnection();
-            PreparedStatement stmt = con.prepareStatement(  
-                "SELECT hd.MaHoaDon, hd.NgayLap, hd.TongTien, hd.MaNhanVien, " +
-                "hd.MaKhachHang, kh.TenKhachHang, kh.SoDienThoai, kh.DiemTichLuy " +
-                "FROM HoaDon hd JOIN KhachHang kh ON hd.MaKhachHang = kh.MaKhachHang " +
-                "WHERE hd.MaHoaDon = ?"
-            );
-            stmt.setString(1, maHoaDon);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                // Tạo đối tượng hóa đơn từ kết quả truy vấn
-                hd = new HoaDon(
-                    rs.getString("MaHoaDon"),
-                    rs.getString("MaNhanVien"),
-                    rs.getString("MaKhachHang"),
-                    rs.getDate("NgayLap"),
-                    rs.getDouble("TongTien")
-                );
-                
-                // Lấy chi tiết hóa đơn
-                List<ChiTietHoaDon> chiTietList = getChiTietHoaDon(hd.getMaHoaDon());
-                for (ChiTietHoaDon ct : chiTietList) {
-                    hd.themChiTietHoaDon(ct);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return hd;
-    }
-    
-    // Lấy danh sách hóa đơn theo khách hàng
-    public List<HoaDon> getHoaDonTheoKhachHang(String maKhachHang) {
+ // Lấy hóa đơn theo mã hóa đơn hoặc mã khách hàng
+    public List<HoaDon> getHoaDon(String criteria, String searchType) {
         List<HoaDon> ds = new ArrayList<>();
         try {
             Connection con = ins.getConnection();
-            PreparedStatement stmt = con.prepareStatement(
-                "SELECT hd.MaHoaDon, hd.NgayLap, hd.TongTien, hd.MaNhanVien, " +
-                "hd.MaKhachHang, kh.TenKhachHang, kh.SoDienThoai, kh.DiemTichLuy " +
-                "FROM HoaDon hd JOIN KhachHang kh ON hd.MaKhachHang = kh.MaKhachHang " +
-                "WHERE kh.MaKhachHang = ?"
-            );
-            stmt.setString(1, maKhachHang);
+            String sql = "SELECT hd.MaHoaDon, hd.NgayLap, hd.TongTien, hd.MaNhanVien, " +
+                        "hd.MaKhachHang, kh.TenKhachHang, kh.SoDienThoai, kh.DiemTichLuy " +
+                        "FROM HoaDon hd JOIN KhachHang kh ON hd.MaKhachHang = kh.MaKhachHang ";
+            
+            if ("BY_MA_HOA_DON".equals(searchType)) {
+                sql += "WHERE hd.MaHoaDon = ?";
+            } else if ("BY_MA_KHACH_HANG".equals(searchType)) {
+                sql += "WHERE kh.MaKhachHang = ?";
+            } else {
+                throw new IllegalArgumentException("Invalid search type: " + searchType);
+            }
+            
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, criteria);
             ResultSet rs = stmt.executeQuery();
+            
             while (rs.next()) {
-                // Tạo đối tượng hóa đơn từ kết quả truy vấn
                 HoaDon hd = new HoaDon(
                     rs.getString("MaHoaDon"),
                     rs.getString("MaNhanVien"),
@@ -134,7 +106,6 @@ public class HoaDon_DAO {
                     rs.getDouble("TongTien")
                 );
                 
-                // Lấy chi tiết hóa đơn
                 List<ChiTietHoaDon> chiTietList = getChiTietHoaDon(hd.getMaHoaDon());
                 for (ChiTietHoaDon ct : chiTietList) {
                     hd.themChiTietHoaDon(ct);

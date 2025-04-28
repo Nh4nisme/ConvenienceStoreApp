@@ -100,12 +100,19 @@ public class KhachHang_DAO {
         return false;
     }
 
-	public List<KhachHang> timTheoTen(String ten) {
+	public List<KhachHang> timKiemKhachHang(String searchTerm) {
 	    List<KhachHang> ds = new ArrayList<>();
 	    try {
 	        Connection con = ins.getConnection();
-	        PreparedStatement stmt = con.prepareStatement("SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy FROM KhachHang WHERE TenKhachHang LIKE ?");
-	        stmt.setString(1, "%" + ten + "%");
+	        PreparedStatement stmt = con.prepareStatement(
+	            "SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy " +
+	            "FROM KhachHang " +
+	            "WHERE MaKhachHang LIKE ? OR TenKhachHang LIKE ? OR SoDienThoai LIKE ?"
+	        );
+	        String wildcardTerm = "%" + searchTerm + "%";
+	        stmt.setString(1, wildcardTerm);
+	        stmt.setString(2, wildcardTerm);
+	        stmt.setString(3, wildcardTerm);
 	        ResultSet rs = stmt.executeQuery();
 	        while (rs.next()) {
 	            KhachHang kh = new KhachHang(
@@ -122,26 +129,6 @@ public class KhachHang_DAO {
 	    return ds;
 	}
 
-	public KhachHang timTheoSDT(String sdt) {
-	    KhachHang kh = null;
-	    try {
-	        Connection con = ins.getConnection();
-	        PreparedStatement stmt = con.prepareStatement("SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy FROM KhachHang WHERE SoDienThoai = ?");
-	        stmt.setString(1, sdt);
-	        ResultSet rs = stmt.executeQuery();
-	        if (rs.next()) {
-	            kh = new KhachHang(
-	                rs.getString("MaKhachHang"),
-	                rs.getString("TenKhachHang"),
-	                rs.getString("SoDienThoai"),
-	                rs.getDouble("DiemTichLuy")
-	            );
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return kh;
-	}
 
 	public boolean capNhatDiemTichLuy(int maKH, double diemMoi) {
 	    try {
