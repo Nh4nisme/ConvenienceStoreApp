@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import Components.RoundedButton;
@@ -48,6 +49,7 @@ public class OnBoardCard extends JPanel {
 	private JButton btnDelete;
 	private UserInfoCard card;
 	private JTextField txtPhone;
+	private RoundedButton searchBtn;
 
 	public OnBoardCard() {
 		setLayout(new BorderLayout());
@@ -86,11 +88,26 @@ public class OnBoardCard extends JPanel {
 		JPanel searchPanel = new JPanel(new BorderLayout());
 		JLabel findProductsLabel = new JLabel("Find Products:");
 		txtSearch = new JTextField();
-		txtSearch.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-				BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		txtSearch.setBorder(BorderFactory.createCompoundBorder(
+		        BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+		        BorderFactory.createEmptyBorder(5, 5, 5, 5)
+		));
+		searchBtn = new RoundedButton("Search", 30);
+		searchBtn.setBackground(new Color(67, 141, 184));
+        searchBtn.setForeground(Color.WHITE);
+
 		searchPanel.add(findProductsLabel, BorderLayout.WEST);
 		searchPanel.add(txtSearch, BorderLayout.CENTER);
+		searchPanel.add(searchBtn, BorderLayout.EAST);
+		searchBtn.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        timKiemSanPhamTheoMa();
+		    }
+		});
+		
 		leftPanel.add(searchPanel, BorderLayout.NORTH);
+
 
 		JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		categoryPanel.setBackground(Color.LIGHT_GRAY);
@@ -114,10 +131,7 @@ public class OnBoardCard extends JPanel {
 			}
 		};
 
-		for (SanPham sp : ds) {
-			productModel.addRow(
-					new Object[] { false, sp.getMaSanPham(), sp.getTenSanPham(), sp.getGiaBan(), sp.getSoLuongTon() });
-		}
+		hienThiDanhSachSanPham(ds);
 
 		productTable = new JTable(productModel);
 		productTable.setRowHeight(30);
@@ -163,7 +177,6 @@ public class OnBoardCard extends JPanel {
 		    }
 		});
 		
-		// Chỉ sử dụng 1 lần khai báo btnDelete và gắn sự kiện trong cellRenderer
 		cartTable.addMouseListener(new MouseAdapter() {
 		    @Override
 		    public void mouseClicked(MouseEvent e) {
@@ -292,6 +305,10 @@ public class OnBoardCard extends JPanel {
 		                }
 		            }
 		            JOptionPane.showMessageDialog(null, "Thanh toán thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+		            productModel.setRowCount(0);
+		            ds = daoSP.getAllSanPham();
+		            hienThiDanhSachSanPham(ds);
+		            cartModel.setRowCount(0);
 
 		        } catch (Exception ex) {
 		            ex.printStackTrace();
@@ -382,7 +399,33 @@ public class OnBoardCard extends JPanel {
 	    lblAmount.setText(String.valueOf(totalQuantity));
 	}
 
+	private void hienThiDanhSachSanPham(List<SanPham> ds) {
+		for (SanPham sp : ds) {
+		    productModel.addRow(
+		        new Object[] { false, sp.getMaSanPham(), sp.getTenSanPham(), sp.getGiaBan(), sp.getSoLuongTon() }
+		    );
+		}
+	}
+	
+	private void timKiemSanPhamTheoMa() {
+        String ma = txtSearch.getText().trim();
+        if (ma.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mã sản phẩm để tìm.");
+            hienThiDanhSachSanPham(ds);
+            return;
+        }
 
+        DefaultTableModel model = (DefaultTableModel) productTable.getModel();
+        model.setRowCount(0);
+
+        SanPham sp = daoSP.timTheoMa(ma);
+        if (sp == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm có mã: " + ma);
+            hienThiDanhSachSanPham(ds);
+        } else {
+            hienThiDanhSachSanPham(Arrays.asList(sp));
+        }
+    }
 	
 
 }
