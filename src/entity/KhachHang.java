@@ -16,6 +16,13 @@ public class KhachHang {
         this.diemTichLuy = diemTichLuy;
     }
     
+    public KhachHang(String soDienThoai) {
+        this.soDienThoai = soDienThoai;
+        this.maKhachHang = "UNKNOWN";
+        this.tenKhachHang = "Chưa có tên";
+        this.diemTichLuy = 0.0;
+    }
+    
     public String getMaKhachHang() {
         return maKhachHang;
     }

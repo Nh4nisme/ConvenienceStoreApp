@@ -15,11 +15,12 @@ public class ConnectDB {
         return instance;
     }
 
-    public void connect() {
+    // Mở kết nối nếu chưa mở
+    public static void connect() {
         if (con == null) {
             String url = "jdbc:sqlserver://localhost:1433;databaseName=CuaHangTienLoi;encrypt=false";
             String user = "sa";
-            String pass = "sapassword";
+            String pass = "caotrungnguli";
 
             try {
                 con = DriverManager.getConnection(url, user, pass);
@@ -29,6 +30,15 @@ public class ConnectDB {
                 e.printStackTrace();
             }
         }
+    }
+
+    // Trả về đối tượng Connection
+    public static Connection getConnection() {
+        // Mở kết nối nếu chưa mở
+        if (con == null) {
+            connect();
+        }
+        return con;
     }
 
     // Đóng kết nối
@@ -42,10 +52,5 @@ public class ConnectDB {
                 e.printStackTrace();
             }
         }
-    }
-
-    // Trả về đối tượng Connection
-    public static Connection getConnection() {
-        return con;
     }
 }

@@ -12,17 +12,28 @@ import java.awt.event.MouseListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import Components.RoundedButton;
 import Components.UserInfoCard;
+import dao.ChiTietHoaDon_DAO;
+import dao.HoaDon_DAO;
+import dao.KhachHang_DAO;
 import dao.SanPham_DAO;
+import entity.ChiTietHoaDon;
+import entity.HoaDon;
+import entity.KhachHang;
 import entity.SanPham;
 
 public class OnBoardCard extends JPanel {
-	SanPham_DAO dao = new SanPham_DAO();
-	List<SanPham> ds = dao.getAllSanPham();
-	List<String> catery = dao.getTenLoaiSanPham();
+	SanPham_DAO daoSP = new SanPham_DAO();
+	HoaDon_DAO daoHD = new HoaDon_DAO();
+	KhachHang_DAO daoKH = new KhachHang_DAO();
+	ChiTietHoaDon_DAO daoCT = new ChiTietHoaDon_DAO();
+	
+	List<SanPham> ds = daoSP.getAllSanPham();
+	List<String> catery = daoSP.getTenLoaiSanPham();
 	
 	ImageIcon trashIcon = new ImageIcon("./icon/trash.png");
 	private JTable productTable;
@@ -36,6 +47,7 @@ public class OnBoardCard extends JPanel {
 	private JLabel dateLabel;
 	private JButton btnDelete;
 	private UserInfoCard card;
+	private JTextField txtPhone;
 
 	public OnBoardCard() {
 		setLayout(new BorderLayout());
@@ -193,20 +205,25 @@ public class OnBoardCard extends JPanel {
 		JPanel checkoutPanel = new JPanel();
 		checkoutPanel.setLayout(new BoxLayout(checkoutPanel, BoxLayout.Y_AXIS));
 
-		JPanel infoPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+		JPanel infoPanel = new JPanel(new GridLayout(4, 2, 5, 5));
 
-		JLabel totalLabel = new JLabel("Total");
+		JLabel phone = new JLabel("Phone:");
+		txtPhone = new JTextField();
+		infoPanel.add(phone);
+		infoPanel.add(txtPhone);
+		
+		JLabel totalLabel = new JLabel("Total:");
 		totalAmountLabel = new JLabel("0.000 VND");
 		totalAmountLabel.setHorizontalAlignment(JLabel.RIGHT);
 		infoPanel.add(totalLabel);
 		infoPanel.add(totalAmountLabel);
 
-		infoPanel.add(new JLabel("Amounts"));
+		infoPanel.add(new JLabel("Amounts:"));
 		lblAmount = new JLabel("0");
 		lblAmount.setHorizontalAlignment(JLabel.RIGHT);
 		infoPanel.add(lblAmount);
 
-		infoPanel.add(new JLabel("Date"));
+		infoPanel.add(new JLabel("Date:"));
 		dateLabel = new JLabel(
 			    LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
 			    JLabel.RIGHT
@@ -220,6 +237,70 @@ public class OnBoardCard extends JPanel {
 		checkoutButton.setFocusPainted(false);
 		checkoutButton.setFont(new Font("Segoe UI", Font.BOLD, 16));
 		checkoutButton.setPreferredSize(new Dimension(120, 40));
+
+		checkoutButton.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+		            String maHoaDon = String.format("HD%05d", daoHD.getCurrentOrderCount() + 1);
+		            String maKH = null;
+		            String totalText = totalAmountLabel.getText().replace(" VND", "").replace(",", "").trim();
+	                double total = Double.parseDouble(totalText);
+
+		            if (!txtPhone.getText().trim().isEmpty()) {
+		                KhachHang kh = daoKH.timTheoSDT(txtPhone.getText());
+
+		                if (kh == null) {
+		                    kh = new KhachHang(txtPhone.getText());
+		                    daoKH.themKhachHang(kh);
+		                    maKH = kh.getMaKhachHang();
+		                } else {
+		                    maKH = kh.getMaKhachHang();
+		                }
+
+		                daoKH.capNhatDiem(maKH, total);
+
+		            }
+
+		            java.sql.Date today = java.sql.Date.valueOf(LocalDate.now());
+
+		            HoaDon hd = new HoaDon(maHoaDon, "NV00001", maKH, today, total);
+		            daoHD.themHoaDon(hd);
+
+		            int count = daoCT.getCurrentOrderDetailCount();
+		            int index = 1;
+
+		            for (int i = 0; i < cartModel.getRowCount(); i++) {
+		                String tenSanPham = cartModel.getValueAt(i, 0).toString();
+		                double donGia = Double.parseDouble(cartModel.getValueAt(i, 1).toString());
+		                int soLuong = Integer.parseInt(cartModel.getValueAt(i, 2).toString());
+
+		                String maSanPham = daoSP.timMaSanPhamTheoTen(tenSanPham);
+		                String maChiTiet = String.format("CT%05d", count + index);
+		                index++;
+
+		                ChiTietHoaDon ct = new ChiTietHoaDon(maChiTiet, maHoaDon, maSanPham, soLuong, donGia);
+		                System.out.println(ct.toString());
+		                if (daoCT.themChiTietHoaDon(ct)) {
+		                    System.out.println("✔️ Thêm chi tiết hóa đơn thành công");
+
+		                    if (daoSP.giamSoLuongTon(maSanPham, soLuong)) {
+		                        System.out.println("✔️ Đã giảm số lượng tồn kho cho sản phẩm: " + maSanPham);
+		                    } else {
+		                        System.err.println("❌ Không thể giảm số lượng tồn kho cho sản phẩm: " + maSanPham);
+		                    }
+		                }
+		            }
+		            JOptionPane.showMessageDialog(null, "Thanh toán thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+		        } catch (Exception ex) {
+		            ex.printStackTrace();
+		            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi tạo hóa đơn.");
+		        }
+		    }
+		});
+
+
 
 		checkoutPanel.add(Box.createVerticalStrut(10));
 		checkoutPanel.add(infoPanel);
