@@ -87,31 +87,6 @@ public class KhachHang_DAO {
 	    }
 	    return false;
 	}
-	
-	public boolean capNhatDiem(String maKhachHang, double tongTien) {
-	    try {
-	        Connection con = ins.getConnection();
-	        CallableStatement stmt = con.prepareCall("{call CapNhatDiemTichLuy(?, ?)}");
-
-	        stmt.setString(1, maKhachHang);
-	        stmt.setDouble(2, tongTien*1000);
-
-	        boolean success = stmt.executeUpdate() > 0;
-
-	        if (success) {
-	            System.out.println("✔️ Cập nhật điểm " + tongTien + "thành công cho khách hàng: " + maKhachHang);
-	        } else {
-	            System.out.println("❌ Cập nhật điểm thất bại cho khách hàng: " + maKhachHang);
-	        }
-
-	        return success;
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;
-	    }
-	}
-
-
 
 	public boolean xoaKhachHang(String maKH) {
         try {
@@ -125,12 +100,19 @@ public class KhachHang_DAO {
         return false;
     }
 
-	public List<KhachHang> timTheoTen(String ten) {
+	public List<KhachHang> timKiemKhachHang(String searchTerm) {
 	    List<KhachHang> ds = new ArrayList<>();
 	    try {
 	        Connection con = ins.getConnection();
-	        PreparedStatement stmt = con.prepareStatement("SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy FROM KhachHang WHERE TenKhachHang LIKE ?");
-	        stmt.setString(1, "%" + ten + "%");
+	        PreparedStatement stmt = con.prepareStatement(
+	            "SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy " +
+	            "FROM KhachHang " +
+	            "WHERE MaKhachHang LIKE ? OR TenKhachHang LIKE ? OR SoDienThoai LIKE ?"
+	        );
+	        String wildcardTerm = "%" + searchTerm + "%";
+	        stmt.setString(1, wildcardTerm);
+	        stmt.setString(2, wildcardTerm);
+	        stmt.setString(3, wildcardTerm);
 	        ResultSet rs = stmt.executeQuery();
 	        while (rs.next()) {
 	            KhachHang kh = new KhachHang(

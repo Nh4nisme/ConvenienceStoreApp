@@ -258,7 +258,8 @@ public class OnBoardCard extends JPanel {
 		                    maKH = kh.getMaKhachHang();
 		                }
 
-		                daoKH.capNhatDiem(maKH, total);
+		                daoKH.capNhatDiemTichLuy(ABORT, total);
+
 
 		            }
 
