@@ -55,7 +55,7 @@ public class KhachHang_DAO {
 	        int currentCount = getCurrentCustomerCount();
 	        
 	        // Tạo mã khách hàng mới dựa trên số lượng khách hàng hiện tại
-	        String newMa = "KH" + String.format("%03d", currentCount + 1); // Tăng lên 1 để tạo mã khách hàng mới
+	        String newMa = "KH" + String.format("%05d", currentCount + 1); // Tăng lên 1 để tạo mã khách hàng mới
 	        kh.setMaKhachHang(newMa);  // Cập nhật lại mã khách hàng
 
 	        // Thực hiện thêm khách hàng vào cơ sở dữ liệu

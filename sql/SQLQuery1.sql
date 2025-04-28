@@ -200,13 +200,13 @@ VALUES
     ('SP00005', N'Cá hộp Hà Nội', 'Hộp', 30.00, 60, 'LS00005', 'cahop.png');
 
 -- 8. Bảng Hóa Đơn
-INSERT INTO HoaDon (MaHoaDon, MaNhanVien, MaKhachHang, TongTien)
+INSERT INTO HoaDon (MaHoaDon, MaNhanVien, MaKhachHang, NgayLap, TongTien)
 VALUES
-    ('HD00001', 'NV00001', 'KH00001', 100.00),
-    ('HD00002', 'NV00002', 'KH00002', 200.00),
-    ('HD00003', 'NV00003', 'KH00003', 150.00),
-    ('HD00004', 'NV00004', 'KH00004', 50.00),
-    ('HD00005', 'NV00005', 'KH00005', 300.00);
+    ('HD00001', 'NV00001', 'KH00001', '2025-04-28 00:00:00', 100.00),
+    ('HD00002', 'NV00002', 'KH00002', '2025-04-28 00:00:00', 200.00),
+    ('HD00003', 'NV00003', 'KH00003', '2025-04-28 00:00:00', 150.00),
+    ('HD00004', 'NV00004', 'KH00004', '2025-04-28 00:00:00', 50.00),
+    ('HD00005', 'NV00005', 'KH00005', '2025-04-28 00:00:00', 300.00);
 
 -- 9. Bảng Chi Tiết Hóa Đơn
 INSERT INTO ChiTietHoaDon (MaChiTiet, MaHoaDon, MaSanPham, SoLuong, DonGia)
@@ -320,6 +320,7 @@ SET TenSanPham = @TenSanPham,
     LinkAnh = @LinkAnh
 WHERE MaSanPham = @MaSanPham;
 END
+
 GO
 
 --Delete SP
@@ -331,6 +332,25 @@ DELETE FROM SanPham
 WHERE MaSanPham = @MaSanPham;
 END
 
+GO
+CREATE PROCEDURE [dbo].[sp_LayTatCaTenLoaiSanPham]
+AS
+BEGIN
+    SELECT DISTINCT l.TenLoai
+    FROM SanPham s
+    JOIN LoaiSanPham l ON s.MaLoai = l.MaLoai;
+END;
+GO
+CREATE PROCEDURE [dbo].[sp_TimSanPhamTheoMa]
+    @MaSanPham NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT * 
+    FROM SanPham
+    WHERE UPPER(MaSanPham) = UPPER(@MaSanPham);
+END
 GO
 
 --Tim SP
@@ -430,16 +450,16 @@ BEGIN
 
     -- Lấy ngày đầu và cuối tháng hiện tại
     DECLARE @NgayDauThang DATE = DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);
-    DECLARE @NgayCuoiThang DATE = EOMONTH(@NgayDauThang);
+	DECLARE @NgayCuoiThang DATE = EOMONTH(@NgayDauThang);
 
-    -- Tính doanh thu theo tuần trong tháng (chú ý tới việc tính tuần)
-SELECT
-    DATEPART(WEEK, NgayLap) - DATEPART(WEEK, @NgayDauThang) + 1 AS Tuan,
-    SUM(TongTien) AS DoanhThu
-FROM HoaDon
-WHERE NgayLap >= @NgayDauThang AND NgayLap <= @NgayCuoiThang
-GROUP BY DATEPART(WEEK, NgayLap)
-ORDER BY DATEPART(WEEK, NgayLap);
+	SELECT 
+    -- Tính số tuần trong tháng bằng cách lấy số ngày từ ngày đầu tháng đến ngày lập hóa đơn chia cho 7
+		(DATEDIFF(DAY, @NgayDauThang, NgayLap) / 7) + 1 AS Tuan,
+		SUM(TongTien) AS DoanhThu
+	FROM HoaDon
+	WHERE NgayLap >= @NgayDauThang AND NgayLap <= @NgayCuoiThang
+	GROUP BY (DATEDIFF(DAY, @NgayDauThang, NgayLap) / 7)
+	ORDER BY Tuan;
 END;
 
 GO

@@ -266,31 +266,25 @@ public class SanPham_DAO {
     public String[][] getDoanhThuTuanTrongThang() {
         List<String[]> list = new ArrayList<>();
         try {
-            // Kết nối đến cơ sở dữ liệu
             ConnectDB.getInstance().connect();
             Connection con = ConnectDB.getConnection();
             
-            // Gọi thủ tục lưu trữ sp_DoanhThuTuanTrongThang
             CallableStatement stmt = con.prepareCall("{call sp_DoanhThuTuanTrongThang}");
             ResultSet rs = stmt.executeQuery();
             
-            // Chuẩn bị một map để lưu trữ doanh thu của từng tuần
             Map<Integer, Double> revenueMap = new HashMap<>();
             
-            // Xử lý kết quả truy vấn
             while (rs.next()) {
                 int week = rs.getInt("Tuan");
                 double doanhThu = rs.getDouble("DoanhThu");
                 revenueMap.put(week, doanhThu);
             }
             
-            // Lấy tuần đầu tiên và tuần cuối cùng trong tháng để đảm bảo có tất cả các tuần
-            int firstWeek = 1;  // Tuần đầu tiên của tháng luôn là tuần 1
-            int lastWeek = 4;   // Tháng có tối đa 4 tuần
+            int firstWeek = 1;
+            int lastWeek = 4;
             
-            // Duyệt qua tất cả các tuần trong tháng
             for (int week = firstWeek; week <= lastWeek; week++) {
-                double doanhThu = revenueMap.getOrDefault(week, 0.0);  // Mặc định là 0 nếu không có doanh thu cho tuần
+                double doanhThu = revenueMap.getOrDefault(week, 0.0);
                 list.add(new String[]{String.valueOf(week), String.format("%.2f", doanhThu)});
             }
             

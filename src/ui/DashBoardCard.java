@@ -20,10 +20,6 @@ import java.util.Map;
 
 public class DashBoardCard extends JPanel {
 	private SanPham_DAO daoSP = new SanPham_DAO();
-
-    private final String[][] weeks = {
-        {"Week1", "xxx"}, {"Week2", "xxx"}, {"Week3", "xxx"}
-    };
     
     private final String[][] employees = {
         {"xxx", "ID"}, {"xxx", "ID"}, {"xxx", "ID"}
@@ -132,13 +128,25 @@ public class DashBoardCard extends JPanel {
         lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         panel.add(lblTitle, BorderLayout.NORTH);
 
-        // Tạo dataset cho biểu đồ
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
         for (int i = 0; i < data.length; i++) {
             String week = data[i][0];
-            double revenue = Double.parseDouble(data[i][1]);  // Chuyển doanh thu sang số
-            dataset.addValue(revenue, "Doanh Thu", week);  // Dữ liệu biểu đồ
+            String revenueStr = data[i][1];
+            double revenue = 0;
+
+            if (revenueStr != null && !revenueStr.isEmpty()) {
+                try {
+                    revenue = Double.parseDouble(revenueStr);
+                } catch (NumberFormatException e) {
+                    revenue = 0;
+                }
+            }
+
+            dataset.addValue(revenue, "Doanh Thu", week);
         }
+
+
 
         // Tạo biểu đồ đường
         JFreeChart lineChart = ChartFactory.createLineChart(
@@ -159,6 +167,7 @@ public class DashBoardCard extends JPanel {
 
         return panel;
     }
+
 
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
