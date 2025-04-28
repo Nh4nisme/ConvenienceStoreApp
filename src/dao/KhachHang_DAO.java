@@ -129,6 +129,26 @@ public class KhachHang_DAO {
 	    return ds;
 	}
 
+	public KhachHang timTheoSDT(String sdt) {
+	    KhachHang kh = null;
+	    try {
+	        Connection con = ins.getConnection();
+	        PreparedStatement stmt = con.prepareStatement("SELECT MaKhachHang, TenKhachHang, SoDienThoai, DiemTichLuy FROM KhachHang WHERE SoDienThoai = ?");
+	        stmt.setString(1, sdt);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            kh = new KhachHang(
+	                rs.getString("MaKhachHang"),
+	                rs.getString("TenKhachHang"),
+	                rs.getString("SoDienThoai"),
+	                rs.getDouble("DiemTichLuy")
+	            );
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return kh;
+	}
 
 	public boolean capNhatDiemTichLuy(int maKH, double diemMoi) {
 	    try {

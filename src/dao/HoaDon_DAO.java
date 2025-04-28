@@ -222,6 +222,8 @@ public class HoaDon_DAO {
         return kh;
     }
     
+    
+    
     public SanPham getSanPhamByMa(String maSP) {
         SanPham sp = null;
         try {
@@ -247,4 +249,28 @@ public class HoaDon_DAO {
         }
         return sp;
     }
+    
+    public boolean themHoaDon(HoaDon hoaDon) {
+        boolean isSuccess = false;
+        try {
+            Connection con = ins.getConnection();
+            String sql = "INSERT INTO HoaDon (MaHoaDon, MaNhanVien, MaKhachHang, NgayLap, TongTien) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement stmt = con.prepareStatement(sql);
+
+            stmt.setString(1, hoaDon.getMaHoaDon());
+            stmt.setString(2, hoaDon.getMaNhanVien());
+            stmt.setString(3, hoaDon.getMaKhachHang());
+            stmt.setDate(4, hoaDon.getNgayLap());
+            stmt.setDouble(5, hoaDon.getTongTien());
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                isSuccess = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return isSuccess;
+    }
+    
 }
