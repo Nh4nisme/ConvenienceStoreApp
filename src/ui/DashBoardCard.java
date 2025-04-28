@@ -4,11 +4,11 @@ import Components.UserInfoCard;
 import entity.SanPham;
 import entity.TaiKhoan;
 import Session.Session;
+import dao.HoaDon_DAO;
 import dao.SanPham_DAO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -16,15 +16,15 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.awt.*;
-import java.util.Map;
 
 public class DashBoardCard extends JPanel {
-	private SanPham_DAO daoSP = new SanPham_DAO();
+    private SanPham_DAO daoSP = new SanPham_DAO();
+    private HoaDon_DAO hoaDonDAO = new HoaDon_DAO();
     
-    private final String[][] employees = {
-        {"xxx", "ID"}, {"xxx", "ID"}, {"xxx", "ID"}
+    private final String[][] weeks = {
+        {"Week1", "xxx"}, {"Week2", "xxx"}, {"Week3", "xxx"}
     };
-
+    
     private final UserInfoCard card;
 
     public DashBoardCard() {
@@ -43,17 +43,20 @@ public class DashBoardCard extends JPanel {
         JPanel statsPanel = new JPanel(new GridLayout(1, 4, 15, 0));
         statsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
+        // Lấy dữ liệu top nhân viên trực tiếp từ hàm getTop3NhanVienDoanhThu
+        String[][] employeeData = hoaDonDAO.getTop3NhanVienDoanhThu();
+
         TaiKhoan tk = Session.getInstance().getTaiKhoan();
         statsPanel.add(createCard("Total Sales", "x.xxx", "./icon/sales.png"));
         statsPanel.add(createCard("Products", "xxxxx", "./icon/products.png"));
-        statsPanel.add(createCard("Orders", "x.xxx", "./icon/orders.png"));
+        statsPanel.add(createCard("Orders", String.valueOf(hoaDonDAO.getCurrentOrderCount()), "./icon/orders.png"));
         statsPanel.add(card = new UserInfoCard("./icon/employee.png"));
 
         JPanel grid2x2 = new JPanel(new GridLayout(2, 2, 15, 15));
         grid2x2.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
         grid2x2.add(createListPanel("Top Products", daoSP.getTopSanPhamBanChayAsArray()));
         grid2x2.add(createLineChartPanel("Revenue", daoSP.getDoanhThuTuanTrongThang()));
-        grid2x2.add(createListPanel("Top Employees", employees));
+        grid2x2.add(createListPanel("Top Employees", employeeData));
         grid2x2.add(createTablePanel());
 
         contentPanel.add(headerPanel);
@@ -97,7 +100,7 @@ public class DashBoardCard extends JPanel {
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
-        String[] columnNames = {"", ""};
+        String[] columnNames = {"Name", "ID"};
         JTable table = new JTable(data, columnNames);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         table.setTableHeader(null);
@@ -113,7 +116,7 @@ public class DashBoardCard extends JPanel {
         table.getColumnModel().getColumn(1).setCellRenderer(rightRenderer);
 
         panel.add(lblTitle, BorderLayout.NORTH);
-        panel.add(table, BorderLayout.CENTER);
+        panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         return panel;
     }
@@ -129,45 +132,29 @@ public class DashBoardCard extends JPanel {
         panel.add(lblTitle, BorderLayout.NORTH);
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
         for (int i = 0; i < data.length; i++) {
             String week = data[i][0];
-            String revenueStr = data[i][1];
-            double revenue = 0;
-
-            if (revenueStr != null && !revenueStr.isEmpty()) {
-                try {
-                    revenue = Double.parseDouble(revenueStr);
-                } catch (NumberFormatException e) {
-                    revenue = 0;
-                }
-            }
-
+            double revenue = Double.parseDouble(data[i][1]);
             dataset.addValue(revenue, "Doanh Thu", week);
         }
 
-
-
-        // Tạo biểu đồ đường
         JFreeChart lineChart = ChartFactory.createLineChart(
-                "Doanh Thu Theo Tuần", // Tiêu đề biểu đồ
-                "Tuần",                // Tiêu đề trục X
-                "Doanh Thu",           // Tiêu đề trục Y
-                dataset,               // Dữ liệu biểu đồ
+                "Doanh Thu Theo Tuần",
+                "Tuần",
+                "Doanh Thu",
+                dataset,
                 PlotOrientation.VERTICAL,
-                true,                  // Hiển thị Legend
-                true,                  // Hiển thị tooltips
-                false                  // Không hiển thị URL
+                true,
+                true,
+                false
         );
 
-        // Thêm biểu đồ vào panel
         ChartPanel chartPanel = new ChartPanel(lineChart);
         chartPanel.setPreferredSize(new Dimension(500, 300));
         panel.add(chartPanel, BorderLayout.CENTER);
 
         return panel;
     }
-
 
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -178,22 +165,20 @@ public class DashBoardCard extends JPanel {
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
         panel.add(lblTitle, BorderLayout.NORTH);
 
-        String[] columns = {"Order ID", "Date", "Customer", "Status"};
-        String[][] data = {
-            {"#2366881", "DEC 30,2024 05:18", "xxxxx xxx xxxx", "completed"},
-            {"#2366881", "DEC 30,2024 05:18", "xxxxx xxx xxxx", "completed"},
-            {"#2366881", "DEC 30,2024 05:18", "xxxxx xxx xxxx", "completed"},
-        };
+        String[] columns = {"Order ID", "Date", "Customer", "Total Amount"};
+        String[][] data = hoaDonDAO.getTop5HoaDonTongTien();
 
         JTable table = new JTable(data, columns);
         table.setRowHeight(30);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         table.setEnabled(false);
 
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
+        table.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+
         JScrollPane scroll = new JScrollPane(table);
         panel.add(scroll, BorderLayout.CENTER);
         return panel;
     }
-   
-
 }

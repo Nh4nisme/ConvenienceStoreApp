@@ -1,6 +1,8 @@
 package dao;
 
 import java.sql.*;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -213,7 +215,7 @@ public class HoaDon_DAO {
                     rs.getString("MaKhachHang"),
                     rs.getString("TenKhachHang"),
                     rs.getString("SoDienThoai"),
-                    rs.getDouble("DiemTichLuy")
+                    rs.getInt("DiemTichLuy")
                 );
             }
         } catch (Exception e) {
@@ -222,7 +224,70 @@ public class HoaDon_DAO {
         return kh;
     }
     
+ // Thêm phương thức này vào class HoaDon_DAO
+    public String[][] getTop3NhanVienDoanhThu() {
+        String[][] result = new String[3][2]; // 3 hàng, 2 cột (Tên NV, Mã NV)
+        for (int i = 0; i < 3; i++) {
+            result[i][0] = "N/A"; // Tên nhân viên
+            result[i][1] = "N/A"; // Mã nhân viên
+        }
+        
+        try {
+            Connection con = ins.getConnection();
+            PreparedStatement stmt = con.prepareStatement(
+                "SELECT TOP 3 nv.MaNhanVien, nv.HoTen, SUM(hd.TongTien) as TongDoanhThu " +
+                "FROM HOADON hd " +
+                "JOIN NHANVIEN nv ON hd.MaNhanVien = nv.MaNhanVien " +
+                "GROUP BY nv.MaNhanVien, nv.HoTen " +
+                "ORDER BY TongDoanhThu DESC"
+            );
+            ResultSet rs = stmt.executeQuery();
+            int index = 0;
+            while (rs.next() && index < 3) {
+                result[index][0] = rs.getString("HoTen") != null ? rs.getString("HoTen") : "N/A";
+                result[index][1] = rs.getString("MaNhanVien") != null ? rs.getString("MaNhanVien") : "N/A";
+                index++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
     
+    // Hàm để lấy 5 hóa đơn có tổng tiền cao nhất
+    public String[][] getTop5HoaDonTongTien() {
+        String[][] result = new String[5][4]; // 5 hàng, 4 cột (Order ID, Date, Customer, Total Amount)
+        for (int i = 0; i < 5; i++) {
+            result[i][0] = "N/A"; // Order ID
+            result[i][1] = "N/A"; // Date
+            result[i][2] = "N/A"; // Customer
+            result[i][3] = "N/A"; // Total Amount
+        }
+        
+        try {
+            Connection con = ins.getConnection();
+            PreparedStatement stmt = con.prepareStatement(
+                "SELECT TOP 5 hd.MaHoaDon, hd.NgayLap, kh.TenKhachHang, hd.TongTien " +
+                "FROM HOADON hd " +
+                "JOIN KHACHHANG kh ON hd.MaKhachHang = kh.MaKhachHang " +
+                "ORDER BY hd.TongTien DESC"
+            );
+            ResultSet rs = stmt.executeQuery();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+            DecimalFormat numberFormat = new DecimalFormat("#,###");
+            int index = 0;
+            while (rs.next() && index < 5) {
+                result[index][0] = rs.getString("MaHoaDon") != null ? rs.getString("MaHoaDon") : "N/A";
+                result[index][1] = rs.getTimestamp("NgayLap") != null ? dateFormat.format(rs.getTimestamp("NgayLap")) : "N/A";
+                result[index][2] = rs.getString("TenKhachHang") != null ? rs.getString("TenKhachHang") : "N/A";
+                result[index][3] = numberFormat.format(rs.getDouble("TongTien"));
+                index++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
     
     public SanPham getSanPhamByMa(String maSP) {
         SanPham sp = null;
