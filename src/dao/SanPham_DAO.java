@@ -266,25 +266,31 @@ public class SanPham_DAO {
     public String[][] getDoanhThuTuanTrongThang() {
         List<String[]> list = new ArrayList<>();
         try {
+            // Kết nối đến cơ sở dữ liệu
             ConnectDB.getInstance().connect();
             Connection con = ConnectDB.getConnection();
             
+            // Gọi thủ tục lưu trữ sp_DoanhThuTuanTrongThang
             CallableStatement stmt = con.prepareCall("{call sp_DoanhThuTuanTrongThang}");
             ResultSet rs = stmt.executeQuery();
             
+            // Chuẩn bị một map để lưu trữ doanh thu của từng tuần
             Map<Integer, Double> revenueMap = new HashMap<>();
             
+            // Xử lý kết quả truy vấn
             while (rs.next()) {
                 int week = rs.getInt("Tuan");
                 double doanhThu = rs.getDouble("DoanhThu");
                 revenueMap.put(week, doanhThu);
             }
             
-            int firstWeek = 1;
-            int lastWeek = 4;
+            // Lấy tuần đầu tiên và tuần cuối cùng trong tháng để đảm bảo có tất cả các tuần
+            int firstWeek = 1;  // Tuần đầu tiên của tháng luôn là tuần 1
+            int lastWeek = 4;   // Tháng có tối đa 4 tuần
             
+            // Duyệt qua tất cả các tuần trong tháng
             for (int week = firstWeek; week <= lastWeek; week++) {
-                double doanhThu = revenueMap.getOrDefault(week, 0.0);
+                double doanhThu = revenueMap.getOrDefault(week, 0.0);  // Mặc định là 0 nếu không có doanh thu cho tuần
                 list.add(new String[]{String.valueOf(week), String.format("%.2f", doanhThu)});
             }
             
@@ -295,5 +301,48 @@ public class SanPham_DAO {
         return list.toArray(new String[0][2]);
     }
 
+    public int getTongSoSanPhamKhacNhau() {
+        int totalProducts = 0;
+        
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            
+            String countQuery = "SELECT COUNT(DISTINCT MaSanPham) AS TongSoSanPhamKhacNhau FROM SanPham";
+            Statement stmt = con.createStatement();
+            ResultSet rsCount = stmt.executeQuery(countQuery);
+
+            if (rsCount.next()) {
+                totalProducts = rsCount.getInt("TongSoSanPhamKhacNhau");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalProducts;
+    }
+    
+    public int getTongSoLuongSanPhamBanRa() {
+        int totalQuantitySold = 0;
+        
+        try {
+            ConnectDB.getInstance().connect();
+            Connection con = ConnectDB.getConnection();
+            
+            String sumQuery = "SELECT SUM(SoLuong) AS TongSoLuongSanPhamBanRa FROM ChiTietHoaDon";
+            Statement stmt = con.createStatement();
+            ResultSet rsSum = stmt.executeQuery(sumQuery);
+
+            if (rsSum.next()) {
+                totalQuantitySold = rsSum.getInt("TongSoLuongSanPhamBanRa");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalQuantitySold;
+    }
 
 }

@@ -47,8 +47,8 @@ public class DashBoardCard extends JPanel {
         String[][] employeeData = hoaDonDAO.getTop3NhanVienDoanhThu();
 
         TaiKhoan tk = Session.getInstance().getTaiKhoan();
-        statsPanel.add(createCard("Total Sales", "x.xxx", "./icon/sales.png"));
-        statsPanel.add(createCard("Products", "xxxxx", "./icon/products.png"));
+        statsPanel.add(createCard("Total Sales", String.valueOf(daoSP.getTongSoLuongSanPhamBanRa()), "./icon/sales.png"));
+        statsPanel.add(createCard("Products", String.valueOf(daoSP.getTongSoSanPhamKhacNhau()), "./icon/products.png"));
         statsPanel.add(createCard("Orders", String.valueOf(hoaDonDAO.getCurrentOrderCount()), "./icon/orders.png"));
         statsPanel.add(card = new UserInfoCard("./icon/employee.png"));
 
