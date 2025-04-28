@@ -188,7 +188,12 @@ VALUES
     ('LS00002', N'Mì gói'),
     ('LS00003', N'Bánh quy'),
     ('LS00004', N'Sữa tươi'),
-    ('LS00005', N'Cá hộp');
+    ('LS00005', N'Cá hộp'),
+    ('LS00006', N'Đồ uống có ga'),
+    ('LS00007', N'Bánh kẹo'),
+    ('LS00008', N'Gia vị và thực phẩm chế biến sẵn'),
+    ('LS00009', N'Chăm sóc sức khỏe'),
+    ('LS00010', N'Đồ gia dụng');
 
 -- 7. Bảng Sản Phẩm[CuaHangTienLoi]
 INSERT INTO SanPham (MaSanPham, TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai, LinkAnh)
@@ -197,7 +202,62 @@ VALUES
     ('SP00002', N'Mì gói Hảo Hảo', 'Gói', 5.00, 50, 'LS00002', 'mi_haohao.png'),
     ('SP00003', N'Bánh quy Oreo', 'Hộp', 20.00, 75, 'LS00003', 'banhquy_socola.png'),
     ('SP00004', N'Sữa tươi Vinamilk', 'Chai', 15.00, 200, 'LS00004', 'sua_tuoi.png'),
-    ('SP00005', N'Cá hộp Hà Nội', 'Hộp', 30.00, 60, 'LS00005', 'cahop.png');
+    ('SP00005', N'Cá hộp Hà Nội', 'Hộp', 30.00, 60, 'LS00005', 'cahop.png'),
+    ('SP00006', N'Nước suối LaVie 1L', 'Chai', 12.00, 150, 'LS00001', 'lavie.png'),
+    ('SP00007', N'Nước suối Evian 500ml', 'Chai', 25.00, 80, 'LS00001', 'evian.png'),
+    ('SP00008', N'Nước suối Dasani 600ml', 'Chai', 18.00, 90, 'LS00001', 'dasani.png'),
+    ('SP00009', N'Nước suối Perrier 330ml', 'Chai', 30.00, 70, 'LS00001', 'perrier.png'),
+    ('SP00010', N'Nước suối Nestlé Pure Life 1L', 'Chai', 15.00, 110, 'LS00001', 'Nestle_Pure_life.png'),
+    ('SP00011', N'Nước khoáng Fiji 500ml', 'Chai', 50.00, 60, 'LS00001', 'fiji.png'),
+    ('SP00012', N'Mì Gấu Đỏ (thịt bò)', 'Gói', 5.00, 50, 'LS00002', 'GauDo.png'),
+    ('SP00013', N'Mì Vifon (gà)', 'Gói', 6.00, 60, 'LS00002', 'Vifon.png'),
+    ('SP00014', N'Mì Omachi (tôm hùm)', 'Gói', 10.00, 80, 'LS00002', 'omachi.png'),
+    ('SP00015', N'Bánh quy Digestive', 'Hộp', 25.00, 60, 'LS00003', 'Digestive.png'),
+    ('SP00016', N'Bánh quy Costo (Vani)', 'Hộp', 15.00, 80, 'LS00003', 'Costo.png'),
+    ('SP00017', N'Bánh quy Marie (Nestlé)', 'Hộp', 18.00, 90, 'LS00003', 'marie.png'),
+    ('SP00018', N'Bánh quy Choco Pie', 'Hộp', 30.00, 70, 'LS00003', 'chocopie.png'),
+    ('SP00019', N'Bánh quy Ritz', 'Hộp', 22.00, 65, 'LS00003', 'ritz.png'),
+    ('SP00020', N'Bánh quy Cream (Lotte)', 'Hộp', 28.00, 50, 'LS00003', 'cream.png'),
+    ('SP00021', N'Sữa tươi TH True Milk', 'Chai', 20.00, 150, 'LS00004', 'THTrueMilk.png'),
+    ('SP00022', N'Sữa tươi Mộc Châu', 'Chai', 18.00, 180, 'LS00004', 'MocChau.png'),
+    ('SP00023', N'Sữa tươi FrieslandCampina Dutch Lady', 'Chai', 25.00, 200, 'LS00004', 'dutchlady.png'),
+    ('SP00024', N'Sữa tươi NutiFood', 'Chai', 22.00, 170, 'LS00004', 'nutifood.png'),
+    ('SP00025', N'Sữa tươi Đà Lạt Milk', 'Chai', 19.00, 160, 'LS00004', 'dalat.png'),
+    ('SP00026', N'Sữa tươi Ovaltine', 'Chai', 24.00, 140, 'LS00004', 'ovaltine.png'),
+    ('SP00027', N'Cá ngừ hộp (John West)', 'Hộp', 40.00, 80, 'LS00005', 'johnwest.png'),
+    ('SP00028', N'Cá thu hộp (Hạ Long)', 'Hộp', 35.00, 90, 'LS00005', 'halong.png'),
+    ('SP00029', N'Cá mackerel hộp (Biển Đông)', 'Hộp', 45.00, 75, 'LS00005', 'mackerel.png'),
+    ('SP00030', N'Cá nục hộp (Diana)', 'Hộp', 38.00, 70, 'LS00005', 'canuc.png'),
+    ('SP00031', N'Coca Cola 330ml', 'Chai', 12.00, 100, 'LS00006', 'coca.png'),
+    ('SP00032', N'Pepsi 330ml', 'Chai', 11.00, 110, 'LS00006', 'Pepsi.png'),
+    ('SP00033', N'Sprite 500ml', 'Chai', 15.00, 90, 'LS00006', 'Sprite.png'),
+    ('SP00034', N'Fanta (cam, nho, dâu)', 'Chai', 18.00, 80, 'LS00006', 'Fanta.png'),
+    ('SP00035', N'7Up 330ml', 'Chai', 14.00, 120, 'LS00006', '7Up.png'),
+    ('SP00036', N'Sunkist (cam, nho)', 'Chai', 16.00, 85, 'LS00006', 'Sunkist.png'),
+    ('SP00037', N'Schweppes 330ml (chanh, quất)', 'Chai', 20.00, 95, 'LS00006', 'Schweppes.png'),
+    ('SP00038', N'Kẹo dẻo dâu (Haribo)', 'Gói', 25.00, 100, 'LS00007', 'harobi.png'),
+    ('SP00039', N'Kẹo Socola (Cadbury)', 'Gói', 30.00, 90, 'LS00007', 'cadbury.png'),
+    ('SP00040', N'Kẹo cao su (Hubba Bubba)', 'Gói', 15.00, 120, 'LS00007', 'hubabuba.png'),
+    ('SP00041', N'Kẹo M&M’s (Socola đậu phộng)', 'Gói', 35.00, 80, 'LS00007', 'mm.png'),
+    ('SP00043', N'Nước mắm Phú Quốc', 'Chai', 45.00, 100, 'LS00008', 'mam.png'),
+    ('SP00044', N'Dầu ăn Meizan', 'Chai', 50.00, 90, 'LS00008', 'meizan.png'),
+    ('SP00045', N'Bột ngọt Ajinomoto', 'Gói', 25.00, 120, 'LS00008', 'ajinomoto.png'),
+    ('SP00046', N'Xốt mayonnaise (Hellmann’s)', 'Chai', 60.00, 80, 'LS00008', 'mayone.png'),
+    ('SP00047', N'Xốt cà chua Heinz', 'Chai', 55.00, 85, 'LS00008', 'heinz.png'),
+    ('SP00048', N'Hạt nêm Knorr', 'Gói', 35.00, 95, 'LS00008', 'knorr.png'),
+    ('SP00049', N'Thuốc giảm đau Panadol', 'Hộp', 35.00, 100, 'LS00009', 'panadol.png'),
+    ('SP00050', N'Vitamin C (Citrus)', 'Hộp', 40.00, 90, 'LS00009', 'vitaminC.png'),
+    ('SP00051', N'Thuốc ho Prospan', 'Chai', 50.00, 80, 'LS00009', 'prospan.png'),
+    ('SP00052', N'Thuốc cảm cúm (Theraflu)', 'Hộp', 45.00, 85, 'LS00009', 'flu.png'),
+    ('SP00053', N'Vitamin B Complex', 'Hộp', 55.00, 70, 'LS00009', 'vitaminB.png'),
+    ('SP00054', N'Nước rửa tay Lifebuoy', 'Chai', 30.00, 120, 'LS00009', 'lifebouy.png'),
+    ('SP00055', N'Thuốc bổ sung canxi (Caltrate)', 'Hộp', 60.00, 75, 'LS00009', 'canxi.png'),
+    ('SP00056', N'Giấy vệ sinh Scott', 'Cuộn', 20.00, 100, 'LS00010', 'scott.png'),
+    ('SP00057', N'Dầu gội Head & Shoulders', 'Chai', 65.00, 90, 'LS00010', 'shampoo.png'),
+    ('SP00058', N'Bột giặt OMO', 'Túi', 70.00, 85, 'LS00010', 'omo.png'),
+    ('SP00059', N'Nước lau sàn Cif', 'Chai', 50.00, 80, 'LS00010', 'cif.png'),
+    ('SP00060', N'Màng bọc thực phẩm Glad', 'Hộp', 35.00, 95, 'LS00010', 'glad.png'),
+    ('SP00061', N'Nước rửa chén Sunlight', 'Chai', 40.00, 100, 'LS00010', 'sunlight.png');
 
 -- 8. Bảng Hóa Đơn
 INSERT INTO HoaDon (MaHoaDon, MaNhanVien, MaKhachHang, NgayLap, TongTien)
@@ -333,24 +393,28 @@ WHERE MaSanPham = @MaSanPham;
 END
 
 GO
+
 CREATE PROCEDURE [dbo].[sp_LayTatCaTenLoaiSanPham]
 AS
 BEGIN
-    SELECT DISTINCT l.TenLoai
-    FROM SanPham s
-    JOIN LoaiSanPham l ON s.MaLoai = l.MaLoai;
+SELECT DISTINCT l.TenLoai
+FROM SanPham s
+         JOIN LoaiSanPham l ON s.MaLoai = l.MaLoai;
 END;
+
 GO
+
 CREATE PROCEDURE [dbo].[sp_TimSanPhamTheoMa]
     @MaSanPham NVARCHAR(255)
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT * 
-    FROM SanPham
-    WHERE UPPER(MaSanPham) = UPPER(@MaSanPham);
+SELECT *
+FROM SanPham
+WHERE UPPER(MaSanPham) = UPPER(@MaSanPham);
 END
+
 GO
 
 --Tim SP
@@ -443,6 +507,7 @@ ORDER BY TongSoLuongBan DESC
 END
 
 GO
+
 CREATE PROCEDURE sp_DoanhThuTuanTrongThang
     AS
 BEGIN
@@ -452,14 +517,14 @@ BEGIN
     DECLARE @NgayDauThang DATE = DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);
 	DECLARE @NgayCuoiThang DATE = EOMONTH(@NgayDauThang);
 
-	SELECT 
+SELECT
     -- Tính số tuần trong tháng bằng cách lấy số ngày từ ngày đầu tháng đến ngày lập hóa đơn chia cho 7
-		(DATEDIFF(DAY, @NgayDauThang, NgayLap) / 7) + 1 AS Tuan,
-		SUM(TongTien) AS DoanhThu
-	FROM HoaDon
-	WHERE NgayLap >= @NgayDauThang AND NgayLap <= @NgayCuoiThang
-	GROUP BY (DATEDIFF(DAY, @NgayDauThang, NgayLap) / 7)
-	ORDER BY Tuan;
+    (DATEDIFF(DAY, @NgayDauThang, NgayLap) / 7) + 1 AS Tuan,
+    SUM(TongTien) AS DoanhThu
+FROM HoaDon
+WHERE NgayLap >= @NgayDauThang AND NgayLap <= @NgayCuoiThang
+GROUP BY (DATEDIFF(DAY, @NgayDauThang, NgayLap) / 7)
+ORDER BY Tuan;
 END;
 
 GO
@@ -482,6 +547,3 @@ SET DiemTichLuy = DiemTichLuy + @DiemMoi
 WHERE MaKhachHang = @MaKhachHang;
 END
 END
-
-
-
