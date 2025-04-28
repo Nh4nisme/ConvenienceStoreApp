@@ -294,48 +294,15 @@ CREATE PROCEDURE sp_ThemSanPham
     @LinkAnh NVARCHAR(255)
 AS
 BEGIN
-    INSERT INTO SanPham (MaSanPham, TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai, LinkAnh)
-    VALUES (@MaSanPham, @TenSanPham, @DonViTinh, @GiaBan, @SoLuongTon, @MaLoai, @LinkAnh);
+INSERT INTO SanPham (MaSanPham, TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai, LinkAnh)
+VALUES (@MaSanPham, @TenSanPham, @DonViTinh, @GiaBan, @SoLuongTon, @MaLoai, @LinkAnh);
 END
+
+GO
 
 --Update SP
 CREATE PROCEDURE sp_CapNhatSanPham
-   @MaSanPham VARCHAR(10), 
-    @TenSanPham NVARCHAR(100), 
-    @DonViTinh NVARCHAR(20), 
-    @GiaBan DECIMAL(10,2), 
-    @SoLuongTon INT, 
-    @MaLoai VARCHAR(10), 
-    @LinkAnh NVARCHAR(255)
-AS
-BEGIN
-   UPDATE SanPham
-    SET TenSanPham = @TenSanPham,
-        DonViTinh = @DonViTinh,
-        GiaBan = @GiaBan,
-        SoLuongTon = @SoLuongTon,
-        MaLoai = @MaLoai,
-        LinkAnh = @LinkAnh
-    WHERE MaSanPham = @MaSanPham;
-=======
---Create Product
-CREATE PROCEDURE sp_ThemSanPham
     @MaSanPham VARCHAR(10),
-    @TenSanPham NVARCHAR(255),
-    @DonViTinh NVARCHAR(50),
-    @GiaBan FLOAT,
-    @SoLuongTon INT,
-    @MaLoai VARCHAR(10),
-    @LinkAnh NVARCHAR(255)
-AS
-BEGIN
-    INSERT INTO SanPham (MaSanPham, TenSanPham, DonViTinh, GiaBan, SoLuongTon, MaLoai, LinkAnh)
-    VALUES (@MaSanPham, @TenSanPham, @DonViTinh, @GiaBan, @SoLuongTon, @MaLoai, @LinkAnh);
-END
-
---Update SP
-CREATE PROCEDURE sp_CapNhatSanPham
-   @MaSanPham VARCHAR(10), 
     @TenSanPham NVARCHAR(100), 
     @DonViTinh NVARCHAR(20), 
     @GiaBan DECIMAL(10,2), 
@@ -344,17 +311,15 @@ CREATE PROCEDURE sp_CapNhatSanPham
     @LinkAnh NVARCHAR(255)
 AS
 BEGIN
-   UPDATE SanPham
-    SET TenSanPham = @TenSanPham,
-        DonViTinh = @DonViTinh,
-        GiaBan = @GiaBan,
-        SoLuongTon = @SoLuongTon,
-        MaLoai = @MaLoai,
-        LinkAnh = @LinkAnh
-    WHERE MaSanPham = @MaSanPham;
-
+UPDATE SanPham
+SET TenSanPham = @TenSanPham,
+    DonViTinh = @DonViTinh,
+    GiaBan = @GiaBan,
+    SoLuongTon = @SoLuongTon,
+    MaLoai = @MaLoai,
+    LinkAnh = @LinkAnh
+WHERE MaSanPham = @MaSanPham;
 END
-
 GO
 
 --Delete SP
@@ -426,7 +391,6 @@ SET @rowsAffected = @@ROWCOUNT;
 RETURN @rowsAffected;
 END
 
-
 GO
 
 CREATE PROCEDURE sp_GetShiftsByEmployeeID
@@ -447,20 +411,20 @@ END
 GO
 
 CREATE PROCEDURE sp_TopSanPhamBanChay
-AS
+    AS
 BEGIN
-    SELECT TOP 5 
+SELECT TOP 5
         sp.TenSanPham,
         SUM(ct.SoLuong) AS TongSoLuongBan
-    FROM ChiTietHoaDon ct
-    JOIN SanPham sp ON ct.MaSanPham = sp.MaSanPham
-    GROUP BY sp.MaSanPham, sp.TenSanPham
-    ORDER BY TongSoLuongBan DESC
+FROM ChiTietHoaDon ct
+         JOIN SanPham sp ON ct.MaSanPham = sp.MaSanPham
+GROUP BY sp.MaSanPham, sp.TenSanPham
+ORDER BY TongSoLuongBan DESC
 END
 
 GO
 CREATE PROCEDURE sp_DoanhThuTuanTrongThang
-AS
+    AS
 BEGIN
     SET NOCOUNT ON;
 
@@ -469,16 +433,17 @@ BEGIN
     DECLARE @NgayCuoiThang DATE = EOMONTH(@NgayDauThang);
 
     -- Tính doanh thu theo tuần trong tháng (chú ý tới việc tính tuần)
-    SELECT 
-        DATEPART(WEEK, NgayLap) - DATEPART(WEEK, @NgayDauThang) + 1 AS Tuan,
-        SUM(TongTien) AS DoanhThu
-    FROM HoaDon
-    WHERE NgayLap >= @NgayDauThang AND NgayLap <= @NgayCuoiThang
-    GROUP BY DATEPART(WEEK, NgayLap)
-    ORDER BY DATEPART(WEEK, NgayLap);
+SELECT
+    DATEPART(WEEK, NgayLap) - DATEPART(WEEK, @NgayDauThang) + 1 AS Tuan,
+    SUM(TongTien) AS DoanhThu
+FROM HoaDon
+WHERE NgayLap >= @NgayDauThang AND NgayLap <= @NgayCuoiThang
+GROUP BY DATEPART(WEEK, NgayLap)
+ORDER BY DATEPART(WEEK, NgayLap);
 END;
 
 GO
+
 CREATE PROCEDURE CapNhatDiemTichLuy
     @MaKhachHang VARCHAR(10),
     @TongTien DECIMAL(10,2)
@@ -491,11 +456,11 @@ BEGIN
 
 
     IF EXISTS (SELECT 1 FROM KhachHang WHERE MaKhachHang = @MaKhachHang)
-    BEGIN
-        UPDATE KhachHang
-        SET DiemTichLuy = DiemTichLuy + @DiemMoi
-        WHERE MaKhachHang = @MaKhachHang;
-    END
+BEGIN
+UPDATE KhachHang
+SET DiemTichLuy = DiemTichLuy + @DiemMoi
+WHERE MaKhachHang = @MaKhachHang;
+END
 END
 
 
